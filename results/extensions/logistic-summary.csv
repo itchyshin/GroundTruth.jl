@@ -1,0 +1,3 @@
+scenario,adapter,target,attempted,successful,failed,usable_intervals,unusable_intervals,bias,bias_mcse,rmse,rmse_mcse,coverage,coverage_mcse,coverage_mc_lower,coverage_mc_upper,covered_per_attempt
+"logistic-n120","logistic-MLE","alpha","20","20","0","20","0","0.02577350729554258","0.03884332781488024","0.17126456690531208","0.025033450776917553","1.0","0.0","0.8388748419471801","1.0","1.0"
+"logistic-n120","logistic-MLE","beta","20","20","0","20","0","0.02899823090921725","0.05121691094332772","0.22512477598172703","0.027308820206676573","0.95","0.04873397172404484","0.7638688065532574","0.9911185511992046","0.95"

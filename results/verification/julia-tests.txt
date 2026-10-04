@@ -1,0 +1,16 @@
+Observed command (Julia 1.12.6, isolated task depot, one Julia/BLAS thread):
+julia --startup-file=no --project=GroundTruth.jl -e 'include("GroundTruth.jl/test/runtests.jl"); println("PASS: full test file completed")'
+
+Test set                                                Passed Total
+Gaussian contract and replay                            13     13
+Failure ledger and exact denominators                   40     40
+Monte Carlo formulas, paired data and order independence 6      6
+Bounded Gaussian recovery smoke                         8      8
+Explicit reference bundle                               8      8
+Bounded logistic and known-covariance random intercept   12     12
+Mixed attempts and boundary Monte Carlo uncertainty     8      8
+
+PASS: full test file completed
+Exit code: 0
+Total: 95 passed; 0 failures; 0 errors.
+This receipt records observed tool output; timings omitted.

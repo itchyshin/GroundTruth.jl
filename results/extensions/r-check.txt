@@ -1,0 +1,4 @@
+R version 4.6.0 (2026-04-24)
+logistic estimate/interval max error 3.5660363550960028e-13
+known-covariance GLS estimate/interval max error 1.1102230246251565e-15
+PASS: same data and coefficient targets; random-intercept check uses KNOWN variance components

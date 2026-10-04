@@ -1,0 +1,6 @@
+(julia = "1.12.6", seed = 20261004, reps = 100, rng = "Xoshiro; SHA256 first 64 bits; algorithm v1", scenarios = Scenario[Scenario("gaussian-n100", :gaussian, 100, 1.0, 0.7, 1.2, 0.7, 10)], adapters = [(id = "OLS", metadata = (likelihood = "Gaussian identity; unknown residual variance", target = "alpha,beta", prior = "none", inference = "OLS, exact t intervals", interval_level = 0.95))])
+src/GroundTruth.jl sha256=f69134e7160a19c5c6240df5b742fe8b7f6e3d96873d12de8a5b2672ba0e5597
+Project.toml sha256=ed759f1af8ebf3310d54e36aaba70a863751d40d105bef8fc1e3894738d0a608
+Manifest.toml sha256=84798d8f9fc053582e67d2c9b78622c2df2c5aa7a0aee8813deee45771fce828
+examples/linear.jl sha256=07247b600a4a219eae484fb7be18072a243ddcc3606071ff7784f5ff80f6cc70
+rep1-data.csv sha256=5d854e1370f2843afb6129c331498103c8995707116f01dd2f3ad79b5ada9c7e

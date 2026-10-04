@@ -1,0 +1,3 @@
+R version 4.6.0 (2026-04-24)
+maximum absolute discrepancy 4.9960036108132044e-16
+PASS: coefficients and exact t interval endpoints on identical data

@@ -1,0 +1,5 @@
+R version 4.6.0 (2026-04-24)
+TMB 1.9.21
+maximum coefficient discrepancy 9.1828766812795948e-11
+PASS: convergence, score, coefficients and fixed-point normalized log likelihood
+Intervals not compared: ML residual variance uses N, OLS unbiased variance uses N-2.

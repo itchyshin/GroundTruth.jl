@@ -1,0 +1,6 @@
+# Compiled optional engines and ephemeral machine output
+results/**/tmb-build/
+*.so
+*.dylib
+*.o
+.DS_Store
