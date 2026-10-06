@@ -4,3 +4,5 @@ results/**/tmb-build/
 *.dylib
 *.o
 .DS_Store
+# Documenter-generated local build output.
+/docs/build/
