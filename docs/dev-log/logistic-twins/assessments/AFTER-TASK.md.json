@@ -1,0 +1,36 @@
+{
+  "assessment_performed": true,
+  "draft_sha256": "dbd92237a93c70e098b2cd745e8c4187a2bc02b40020f995b3ee233d42db97f3",
+  "draft_version": "v3",
+  "requested_mode": "independent",
+  "assessor_type": "self",
+  "reviewer": "parent Codex",
+  "method": "Separate whole-draft review after fit-count and routing-proof corrections against retained numerical, preservation and approval evidence; style review after drafting",
+  "genre": "technical after-task report",
+  "coverage": "whole saved draft",
+  "score": 3,
+  "style_status": "scored",
+  "score_reason": "Concrete outcomes and measured differences make the report assessable; required section labels and repeated limits keep some mechanical style.",
+  "confidence": "moderate",
+  "confidence_reason": "Whole draft reviewed, but no human or calibrated independent style assessment.",
+  "examples": [
+    {
+      "location": "AFTER-TASK.md",
+      "cue": "Explicit bounded claim",
+      "impact": "Reader can distinguish tested behavior from deferred work",
+      "repair": "no change needed",
+      "line": 61,
+      "quote": "This arc does NOT cover fitted LMM/GLMM integration, weighted or multivariable logistic regression, interval calibration campaigns, Bayesian twins, JuliaCall, CRAN, arbitrary cross-language parity, remote CI or publication. It does not replace or land the retained old LMM checkout."
+    }
+  ],
+  "evidence_none_reason": null,
+  "science_gate": "pass",
+  "science_gate_reason": "Claims match frozen one-predictor/unit-weight checks and resolved scientific review; no calibration or mixed-model claim.",
+  "facts_gate": "pass",
+  "facts_gate_reason": "Counts, versions and source identities match saved outputs; missing Rose model/effort proof is explicitly unverified.",
+  "references_gate": "pass",
+  "references_gate_reason": "Repository evidence and actual skill/protocol paths support the claims; exact referenced manifests and patch are in this bundle.",
+  "date": "2026-10-06",
+  "calibration_status": "not_seen",
+  "interpretation": "perceived_style_not_authorship"
+}

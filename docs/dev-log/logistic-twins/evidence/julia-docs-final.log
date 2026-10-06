@@ -1,0 +1,5 @@
+  RUN  leaf-docs:G6 shell=/bin/sh cwd=/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl PATH=/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.13/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/opt/X11/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/usr/local/share/dotnet:~/.dotnet/tools:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/z3437171/.codex/tmp/arg0/codex-arg0XCJJLe:/Users/z3437171/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/z3437171/.antigravity-ide/antigravity-ide/bin:/Users/z...
+  PASS leaf-docs:G6: package and documentation check
+       exit=0; EXPECT=matched; output=LOGISTIC_DOCS_PACKAGE_OK
+leaf-docs.md: 1 gates
+ALL MET (1 met, reran: 1, previously met reverified: 1)

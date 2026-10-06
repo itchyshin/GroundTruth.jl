@@ -1,0 +1,36 @@
+{
+  "assessment_performed": true,
+  "draft_sha256": "ea2a0d48e82b5fd2b899a37016924983143b8e6ee2c7736794e28b7f92978d27",
+  "draft_version": "v3",
+  "requested_mode": "independent",
+  "assessor_type": "self",
+  "reviewer": "parent Codex",
+  "method": "Separate whole saved reconciliation reviewed against final root closure, core, paired, docs and preservation receipts after drafting",
+  "genre": "technical reconciliation",
+  "coverage": "whole saved draft",
+  "score": 3,
+  "style_status": "scored",
+  "score_reason": "Concrete fit counts, receipt paths and timing support assessment; repeated gate terminology makes some sections mechanical.",
+  "confidence": "moderate",
+  "confidence_reason": "Whole draft reviewed, but no human or calibrated independent style assessment.",
+  "examples": [
+    {
+      "location": "paired evidence",
+      "cue": "Units attached to counts",
+      "impact": "Reader can distinguish data fits from coefficient rows",
+      "repair": "no change needed",
+      "line": 35,
+      "quote": "**Paired evidence.** The shared checker uses an independent scalar oracle sourced from the retained audit. It validates seven accepted data fits per engine, 14 engine-by-fixture fits total, 14 accepted coefficient-target rows per engine, and five rejected design cases per engine. The saved science report records worst paired absolute differences of about `6.87e-11` for coefficients, `7.12e-12` for SEs, `8.28e-11` for endpoints, and `9.99e-16` for mean NLL. Wrong-answer controls reject sign flips, swapped/missing/duplicate targets, initial-information intervals, and altered fixture bytes; row permutation passes. The comparison is bounded to those fixtures and unit-weight one-predictor logistic fits. It does not establish calibration or mixed-model behavior. The science report also retains differences against older native GLM reference intervals; those are not erased by the paired-agreement result."
+    }
+  ],
+  "evidence_none_reason": null,
+  "science_gate": "pass",
+  "science_gate_reason": "Claims match frozen one-predictor/unit-weight checks and resolved scientific review; no calibration or mixed-model claim.",
+  "facts_gate": "pass",
+  "facts_gate_reason": "Current count units, numerical budget and final receipt pointers match saved outputs; closure is separated from the earlier snapshot and missing Rose routing proof.",
+  "references_gate": "pass",
+  "references_gate_reason": "Named local evidence paths support the factual and scientific claims; no external literature claim.",
+  "date": "2026-10-06",
+  "calibration_status": "not_seen",
+  "interpretation": "perceived_style_not_authorship"
+}

@@ -1,0 +1,6 @@
+{
+  "positive_exit": 0,
+  "altered_candidate_csv_exit": 1,
+  "diagnosis": "retained output bytes changed: julia",
+  "original_evidence_untouched": true
+}

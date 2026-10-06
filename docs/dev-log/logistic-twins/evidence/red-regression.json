@@ -1,0 +1,11 @@
+{
+  "stage": "before production change",
+  "exit_code": 1,
+  "failed_assertion": "fit.converged",
+  "production_unchanged": true,
+  "test": "test/logistic_regression.jl",
+  "baseline_message": "separation or unstable coefficients",
+  "evidence": "parent tool output: 1 fail / 1 test, exact focused regression; initial baseline assertion also passed",
+  "initial_compilation_reported_seconds": 48,
+  "timing_charge": "60s conservative startup allowance; future numeric checks measured"
+}

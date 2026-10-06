@@ -1,0 +1,13 @@
+{
+  "role": "Rose fresh closure reviewer",
+  "task": "/root/logistic_rose_final",
+  "dispatch": "native collaboration agent",
+  "planned_model": "gpt-6-luna",
+  "planned_effort": "medium",
+  "requested_model": null,
+  "requested_effort": null,
+  "runtime_model": null,
+  "runtime_effort": null,
+  "enforced_cli": false,
+  "limitation": "Exact Rose spawn inputs and role-specific manifest were not retained; reviewer cannot attest model/effort. Planned settings are unverified. Read-only review and correction confirmation are retained."
+}

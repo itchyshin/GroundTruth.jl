@@ -5,8 +5,8 @@
 <div class="gt-hero-copy"><span class="gt-eyebrow">STATISTICAL SIMULATION · JULIA</span>
 <h2>How well does your estimator recover the truth?</h2>
 <p>Generate data from a known process. Fit the same data with your chosen engine. Measure recovery, including failures and missing intervals.</p>
-<div class="gt-actions"><a class="gt-button" href="quickstart.html">Run your first study</a><a class="gt-button gt-secondary" href="validation.html">See the validation</a></div>
-<span class="gt-prototype">Research prototype · Gaussian and logistic examples</span></div>
+<div class="gt-actions"><a class="gt-button" href="quickstart.html">Run your first study</a><a class="gt-button gt-secondary" href="validation.html">See the validation scope</a></div>
+<span class="gt-prototype">Research prototype · Gaussian and logistic examples; local logistic repair</span></div>
 <img class="gt-hero-logo" src="assets/logo.png" alt="GroundTruth.jl hex logo: noisy estimates compared with a known reference" width="240" height="240">
 </section>
 <div class="gt-cards">
@@ -18,18 +18,18 @@
 
 ## Why GroundTruth?
 
-A simulation should make its statistical contract easy to inspect: what generated
-the data, which parameters were fitted, what an interval means, and which attempts
-failed. GroundTruth brings these pieces together in a small Julia workflow.
+A simulation should make its statistical contract easy to inspect: what generated the
+data, which parameters were fitted, what an interval means, and which attempts failed.
+GroundTruth assembles these parts into a small Julia workflow. Existing tools already
+provide simulation and recovery summaries; this package makes no novelty claim for
+those features.
 
-Established tools already provide simulation, recovery summaries and R interfaces.
-GroundTruth reuses fitting engines and makes no novelty claim for those features.
+## Start with an example
 
-## Start with a complete example
-
-- [Gaussian regression](quickstart.md): independent draws, OLS estimates and t intervals.
-- [Capabilities and limits](capabilities.md): distinguish the fitted regressions from the known-covariance oracle.
-- [Validation](validation.md): inspect the saved regression and reference checks.
+- [Gaussian regression](quickstart.md): independent draws, OLS estimates and Student t intervals.
+- [Logistic fixed effects](quickstart.md#Logistic-regression): Bernoulli-logit data and conditional log-odds targets.
+- [Capabilities and limits](capabilities.md): review fixed-effect models and the known-covariance oracle.
+- [Validation scope](validation.md): separate historical Gaussian evidence from the local logistic candidate.
 
 ## From scenario to recovery
 
@@ -42,17 +42,13 @@ Scenario → independent generator → shared replication data
 ```
 
 An adapter receives data and its own random-number stream, without scenario truth.
-Bias, RMSE and coverage summaries retain their relevant denominators and Monte Carlo
-uncertainty. A finite point estimate can remain useful when its interval is unavailable.
+Bias, RMSE and coverage summaries retain their denominators. A finite point estimate can
+remain useful when its interval is unavailable.
 
-## Current verification
+## Publication and validation status
 
-The saved core check has 95 passing assertions. Gaussian and logistic reference checks
-are recorded in the repository status file. These checks support specific examples;
-they do not establish broad calibration or speed gains. [Read the evidence](validation.md).
-
-## Where it goes next
-
-Further work should begin with a bounded audit of the logistic estimator. Explicit
-Stan sampling and a small symbolic DGP view remain separate future steps.
-[See the roadmap](roadmap.md).
+The public Julia docs include Gaussian and logistic examples. The local Julia repair and new R logistic workflow passed frozen-fixture, package
+and documentation checks. The bounded results do not establish calibration, fitted mixed-
+model support or package-wide cross-language parity. Both candidates remain local and
+uncommitted. Review and publication approval have not been completed. See [validation](validation.md).
+The established R site is at [groundtruth](https://itchyshin.github.io/groundtruth/).

@@ -1,0 +1,55 @@
+{
+  "independent_scalar_oracle": "unchanged functions from hashed earlier audit; no production-helper import",
+  "accepted_fits_checked": 14,
+  "paired_fixtures": 7,
+  "rejected_design_fixtures": 5,
+  "reference_checks": {
+    "audit-r.csv": 5,
+    "audit-glm-final.csv": 5
+  },
+  "worst_paired_absolute_differences": {
+    "coefficient": 6.870948254800169e-11,
+    "se": 7.119638212316204e-12,
+    "endpoint": 8.279243957076687e-11,
+    "mean_nll": 9.992007221626409e-16
+  },
+  "controls": {
+    "sign-flipped coefficients": "rejected",
+    "swapped targets": "rejected",
+    "missing target": "rejected",
+    "duplicate target": "rejected",
+    "initial-information intervals": "rejected",
+    "row permutation": "passed",
+    "changed fixture bytes": "rejected"
+  },
+  "retained_glm_native_interval_mismatches": {
+    "retained": [
+      "beta: lower95 mismatch"
+    ],
+    "analytic": [
+      "alpha: final-information SE mismatch",
+      "alpha: lower90 mismatch",
+      "alpha: upper90 mismatch",
+      "alpha: lower95 mismatch",
+      "alpha: upper95 mismatch",
+      "alpha: analytic SE mismatch",
+      "alpha: analytic lower90 mismatch",
+      "alpha: analytic upper90 mismatch",
+      "alpha: analytic lower95 mismatch",
+      "alpha: analytic upper95 mismatch",
+      "beta: final-information SE mismatch",
+      "beta: lower90 mismatch",
+      "beta: upper90 mismatch",
+      "beta: lower95 mismatch",
+      "beta: upper95 mismatch",
+      "beta: analytic SE mismatch",
+      "beta: analytic lower90 mismatch",
+      "beta: analytic upper90 mismatch",
+      "beta: analytic lower95 mismatch",
+      "beta: analytic upper95 mismatch"
+    ],
+    "asymmetric": [],
+    "inverted": []
+  },
+  "limits": "one-predictor Bernoulli unit weights; numerical agreement, no calibration or GLMM; references reused, not newly refit"
+}

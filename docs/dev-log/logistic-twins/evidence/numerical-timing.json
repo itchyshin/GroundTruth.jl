@@ -1,0 +1,351 @@
+{
+  "limit_seconds": 900,
+  "charged_seconds": 233.77839862427209,
+  "startup_charge_is_conservative_not_measured_wall_time": true,
+  "runs": [
+    {
+      "key": "GroundTruth.jl-sh-logistic",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 12.529268375015818,
+      "exit_code": 1
+    },
+    {
+      "key": "GroundTruth.jl-sh-core",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 11.916223042004276,
+      "exit_code": 1
+    },
+    {
+      "key": "GroundTruth.jl-sh-controls",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 6.116248124977574,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-logistic",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 12.063634041987825,
+      "exit_code": 1
+    },
+    {
+      "key": "GroundTruth.jl-sh-core",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 11.774437750049401,
+      "exit_code": 1
+    },
+    {
+      "key": "GroundTruth.jl-sh-controls",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 5.884230750030838,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-logistic",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.6878846660256386,
+      "exit_code": 1
+    },
+    {
+      "key": "groundtruth-Rscript-core",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 2.144624416017905,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-controls",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.7612001249799505,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-logistic",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 6.080283000017516,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-core",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 10.07022216601763,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-controls",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 5.673791625013109,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-logistic",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.7619796670041978,
+      "exit_code": 1
+    },
+    {
+      "key": "groundtruth-Rscript-core",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 2.1494242919725366,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-controls",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.6203187910141423,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-logistic",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.6446120829787105,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-core",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 2.5221282079583034,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-controls",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.7526169160264544,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-julia-/private/tmp/logistic-large-scale-control.jl",
+      "command": [
+        "/Users/z3437171/.julia/juliaup/julia-1.12.6+0.aarch64.apple.darwin14/Julia-1.12.app/Contents/Resources/julia/bin/julia",
+        "--startup-file=no",
+        "--project=.",
+        "/private/tmp/logistic-large-scale-control.jl"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 9.504508875019383,
+      "exit_code": 1
+    },
+    {
+      "key": "GroundTruth.jl-julia-logistic-large-scale-control.jl",
+      "command": [
+        "/Users/z3437171/.julia/juliaup/julia-1.12.6+0.aarch64.apple.darwin14/Julia-1.12.app/Contents/Resources/julia/bin/julia",
+        "--startup-file=no",
+        "--project=.",
+        "/private/tmp/logistic-large-scale-control.jl"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 9.088090375007596,
+      "exit_code": 1
+    },
+    {
+      "key": "GroundTruth.jl-sh-logistic",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 8.81235474999994,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-core",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 11.151149875018746,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-controls",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 6.391071542049758,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-logistic-normal-article.R",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "/private/tmp/logistic-normal-article.R"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.7473685830482282,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-logistic",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 5.976045584015083,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-core",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 10.305868749972433,
+      "exit_code": 0
+    },
+    {
+      "key": "GroundTruth.jl-sh-controls",
+      "command": [
+        "sh",
+        "scripts/verify-logistic.sh",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/GroundTruth.jl",
+      "elapsed_seconds": 6.0200154590420425,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-logistic",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "logistic"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.9672963750199415,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-core",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "core"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 2.171461999998428,
+      "exit_code": 0
+    },
+    {
+      "key": "groundtruth-Rscript-controls",
+      "command": [
+        "Rscript",
+        "--vanilla",
+        "scripts/verify.R",
+        "controls"
+      ],
+      "cwd": "/Users/z3437171/Documents/Codex/2026-10-06/logistic-twins/groundtruth",
+      "elapsed_seconds": 1.490038416988682,
+      "exit_code": 0
+    }
+  ]
+}

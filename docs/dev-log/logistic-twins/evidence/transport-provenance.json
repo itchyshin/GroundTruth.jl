@@ -1,0 +1,16 @@
+{
+  "julia-fits.csv": {
+    "sha256": "edcb0d21354e13938d040c03f8ec9a51398ec70da302fa0d61c3ea1c3c4f7040",
+    "engine": "julia",
+    "source_path": "src/GroundTruth.jl",
+    "source_sha256": "197852caa75f56d0c3b56fbdd48775bb143c246f4dd89f185a64a51933d2089c",
+    "public_base": "9f0dd012f522b083a45ec03af7fad9bdbc9eb8e3"
+  },
+  "r-fits.csv": {
+    "sha256": "6f2e596fe3bbd88f891df2447cb00ed3d7d7d102a44e530d7d4309a250fd8b21",
+    "engine": "r",
+    "source_path": "R/groundtruth.R",
+    "source_sha256": "b130c50fbf54e81a764c28684d5f085c7e0e1ecc8ab428198c443488d83717cb",
+    "public_base": "f44a0bfe29d34f081f7eaca3d07b0fbf93a3bf2f"
+  }
+}
