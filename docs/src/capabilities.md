@@ -3,16 +3,15 @@
 | Model or feature | Scope | Limit |
 |---|---|---|
 | Gaussian linear regression | Independent generator; OLS coefficients and Student t intervals | Targets intercept `alpha` and slope `beta` |
-| Logistic fixed effects | Existing public Julia Bernoulli-logit generator and MLE; this candidate repairs the MLE and adds a native R GLM adapter | Conditional log odds; finite-MLE existence and convergence are checked |
+| Logistic fixed effects | Julia Bernoulli-logit generator and repaired MLE; native R GLM adapter in groundtruth | Conditional log odds; finite-MLE existence and convergence are checked |
 | Recovery | Bias, RMSE, Monte Carlo uncertainty, coverage and Wilson uncertainty | Report accepted and usable-interval denominators |
 | Reproducibility | Replay, named streams, copied paired data and provenance | Julia and R streams are distinct; no cross-version draw guarantee |
 | R exchange | CSV and optional identical-data R checks | No live R bridge |
 | Stan/TMB | Explicit Gaussian templates with conformance receipts | Export does not run or validate an engine fit |
 
-The public Julia package already includes the fixed-effect logistic API. This local
-candidate repairs its MLE and adds R support. The frozen-fixture numerical, package and
-documentation checks passed; see [validation](validation.md) for versions and scope.
-The candidates remain local and unpublished. The Gaussian random-intercept example is
+Julia and R provide fixed-effect logistic workflows. The frozen-fixture numerical,
+package and local documentation checks passed; see [validation](validation.md) for
+versions and scope. The Gaussian random-intercept example is
 a known-covariance oracle with supplied variance components, not a fitted GLMM.
 
 ## Logistic model and interpretation

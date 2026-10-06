@@ -72,8 +72,7 @@ bytes; identical seed labels do not produce identical cross-language draws.
 
 Agreement on the specified fixed-effect fixtures is a bounded numerical check. It is
 not an interval-calibration result, fitted-GLMM result or package-wide parity claim. The
-R package and both documentation previews passed local checks. These candidates remain
-unpublished, uncommitted and unapproved for publication.
+R package and both documentation builds passed local checks.
 
 ## Keep denominators visible
 

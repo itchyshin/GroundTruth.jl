@@ -5,17 +5,16 @@ Generate independently. Fit anywhere. Compare against declared truth.
 This small Julia package checks statistical results against known generating values.
 Its public workflow targets the intercept `alpha` and slope `beta` in Gaussian and
 logistic regression, plus a known-covariance Gaussian random-intercept oracle. This
-local candidate repairs the Julia logistic MLE and adds a native R logistic workflow.
-The local candidate passes 393 Julia assertions across 16 suites, frozen-fixture
+version repairs the Julia logistic MLE; the R twin provides a native logistic workflow.
+The retained local checks passed 393 Julia assertions across 16 suites, frozen-fixture
 numerical checks and both documentation builds. Across seven paired, one-predictor
-Bernoulli fixtures with unit weights, 14 accepted fits were checked along with five
-rejected-design fixtures. Maximum paired differences were 6.87e-11 for
+Bernoulli fixtures with unit weights, seven accepted data fits per engine were checked,
+or 14 engine-by-fixture fits total, along with five rejected designs per engine. Maximum paired differences were 6.87e-11 for
 coefficients, 7.12e-12 for standard errors, 8.28e-11 for interval endpoints and
 9.99e-16 for mean negative log likelihood. The Julia checks used Julia 1.12.6 and
 Distributions 0.25.131. The R package check passed with 346 assertions under R 4.6.0;
 its pkgdown preview rendered under pkgdown 2.2.0. These fixed-fixture comparisons
-do not establish calibration, fitted GLMM behavior or package-wide parity. The candidate
-remains local and uncommitted; review and publication approval have not been completed.
+do not establish calibration, fitted GLMM behavior or package-wide parity.
 The package remains a research prototype with a serial runner, no new scheduling
 infrastructure and no automatic model translation or speed claim.
 
@@ -60,8 +59,8 @@ Y_i \sim \operatorname{Bernoulli}(p_i), \qquad
 ```
 
 Here `alpha` and `beta` are conditional log-odds coefficients. The public Julia API
-fits them by bounded Newton maximum likelihood. This local candidate repairs that
-fitter and reports normal Wald intervals from final observed information.
+fits them by bounded Newton maximum likelihood. The repaired
+fitter reports normal Wald intervals from final observed information.
 
 ```julia
 using GroundTruth

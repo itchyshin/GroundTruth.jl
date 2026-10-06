@@ -7,14 +7,15 @@ with the Gaussian OLS and TMB checks. It also records an earlier same-data R `gl
 comparison on a logistic fixture: coefficients and final-information Wald endpoints
 differed by 3.566036e-13. A separate 20-replication logistic extension had intercept
 coverage 1.00 with Wilson interval [0.839, 1.00]. These are historical checks of the
-public baseline, not a fresh run of this candidate or broad calibration evidence.
+earlier public baseline. They are separate from the current fixture checks and do
+not establish broad calibration.
 
-## Local repair and R addition
+## Logistic twins
 
-The local candidate repairs the existing Julia fixed-effect logistic MLE and adds a
+This version repairs the existing Julia fixed-effect logistic MLE and adds a
 native R family/adapter. On Julia 1.12.6 with Distributions 0.25.131, the frozen-fixture
-numerical gate checked 14 accepted fits across seven paired fixtures and five
-rejected-design fixtures. Maximum paired absolute differences were 6.87e-11 for
+numerical gate checked seven accepted data fits per engine, or 14 engine-by-fixture
+fits total, and five rejected designs per engine. Maximum paired absolute differences were 6.87e-11 for
 coefficients, 7.12e-12 for standard errors, 8.28e-11 for interval endpoints and
 9.99e-16 for mean negative log likelihood. The core Julia tests passed 393 assertions
 across 16 suites.
@@ -22,8 +23,7 @@ across 16 suites.
 R 4.6.0 checked package version 0.0.0.9000: 346 assertions passed, with `Status: OK`
 and no NOTE. The local pkgdown 2.2.0 preview rendered successfully. Documenter 1.19.0
 built the Julia documentation, and the local page, link and anchor checks passed. These
-are local checks; the candidate changes remain uncommitted and publication is not
-approved.
+are retained local checks of the implemented fixed-effect workflow.
 
 The comparison reused identical frozen CSV bytes because Julia and R use distinct random
 streams. Its scope is one-predictor Bernoulli models with unit weights; references were

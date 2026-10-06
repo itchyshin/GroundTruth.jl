@@ -6,7 +6,7 @@
 <h2>How well does your estimator recover the truth?</h2>
 <p>Generate data from a known process. Fit the same data with your chosen engine. Measure recovery, including failures and missing intervals.</p>
 <div class="gt-actions"><a class="gt-button" href="quickstart.html">Run your first study</a><a class="gt-button gt-secondary" href="validation.html">See the validation scope</a></div>
-<span class="gt-prototype">Research prototype · Gaussian and logistic examples; local logistic repair</span></div>
+<span class="gt-prototype">Research prototype · Gaussian and logistic fixed effects</span></div>
 <img class="gt-hero-logo" src="assets/logo.png" alt="GroundTruth.jl hex logo: noisy estimates compared with a known reference" width="240" height="240">
 </section>
 <div class="gt-cards">
@@ -29,7 +29,7 @@ those features.
 - [Gaussian regression](quickstart.md): independent draws, OLS estimates and Student t intervals.
 - [Logistic fixed effects](quickstart.md#Logistic-regression): Bernoulli-logit data and conditional log-odds targets.
 - [Capabilities and limits](capabilities.md): review fixed-effect models and the known-covariance oracle.
-- [Validation scope](validation.md): separate historical Gaussian evidence from the local logistic candidate.
+- [Validation scope](validation.md): separate historical Gaussian evidence from bounded logistic checks.
 
 ## From scenario to recovery
 
@@ -47,8 +47,8 @@ remain useful when its interval is unavailable.
 
 ## Publication and validation status
 
-The public Julia docs include Gaussian and logistic examples. The local Julia repair and new R logistic workflow passed frozen-fixture, package
-and documentation checks. The bounded results do not establish calibration, fitted mixed-
-model support or package-wide cross-language parity. Both candidates remain local and
-uncommitted. Review and publication approval have not been completed. See [validation](validation.md).
+Julia and the R twin provide Gaussian and logistic fixed-effect workflows. The
+implementations passed frozen-fixture, package and local documentation checks. The
+bounded results do not establish calibration, fitted mixed-model support or
+package-wide cross-language parity. See [validation](validation.md).
 The established R site is at [groundtruth](https://itchyshin.github.io/groundtruth/).

@@ -1,13 +1,12 @@
 # Factual status: 6 October 2026
 
-## Publication boundary
+## Implemented workflow
 
-The public Julia package and documentation already include a logistic MLE example and
-a known-covariance Gaussian random-intercept GLS oracle. The public R site covers the
-established Gaussian workflow. This local candidate repairs the Julia fixed-effect
-logistic MLE and adds an R logistic family and native adapter. The R logistic addition
-and the repaired Julia candidate remain local and unpublished. The changes are
-uncommitted; review and publication approval have not been completed.
+The Julia package and R twin support Gaussian and one-predictor Bernoulli-logit
+studies. Julia uses the repaired fixed-effect logistic MLE; R provides a logistic
+family and native GLM adapter. Julia also retains the known-covariance Gaussian
+random-intercept GLS oracle. The checked numerical and failure contracts are
+described below.
 
 ## Historical verification retained from the 4 October status
 
@@ -34,19 +33,18 @@ it is not calibration evidence. The known-covariance Gaussian random-intercept e
 is an oracle with supplied `sigma` and `tau`, not an estimated variance-component model
 or fitted GLMM. Its saved checks do not establish mixed-model support.
 
-## Local candidate checks
+## Retained local validation
 
 The frozen-fixture numerical gate passed under Julia 1.12.6 and Distributions 0.25.131.
-It checked 14 accepted fits across seven paired fixtures and five rejected-design
-fixtures. The largest paired absolute differences were 6.87e-11 for coefficients,
+It checked seven accepted data fits per engine, or 14 engine-by-fixture fits total,
+and five rejected designs per engine. The largest paired absolute differences were 6.87e-11 for coefficients,
 7.12e-12 for standard errors, 8.28e-11 for interval endpoints and 9.99e-16 for mean
 negative log likelihood. The core Julia suite passed 393 assertions across 16 suites.
 
 The R package check passed with 346 assertions under R 4.6.0 for development version
 0.0.0.9000, with `Status: OK` and no NOTE. The pkgdown 2.2.0 site preview rendered and
 its link and reference checks passed. The Julia Documenter 1.19.0 site build and local
-link checks also passed. The local candidate passed package and documentation gates. These results do not
-approve publication.
+link checks also passed. Package and documentation gates passed.
 
 Julia and R streams are distinct; paired comparisons use identical frozen CSV bytes.
 The evidence covers one-predictor Bernoulli models with unit weights and reused
@@ -59,5 +57,4 @@ package-wide cross-language parity.
 No fitted GLMM, broad calibration campaign, Stan posterior sampling result, speed
 advantage or general cross-language parity is claimed. Gaussian OLS continues to use
 Student t intervals; logistic MLE uses normal Wald intervals at separately requested
-90% and 95% levels. The candidate remains local and uncommitted. Final review and
-publication approval have not been completed.
+90% and 95% levels.
