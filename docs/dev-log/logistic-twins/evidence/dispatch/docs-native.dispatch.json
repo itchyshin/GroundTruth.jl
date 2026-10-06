@@ -1,0 +1,12 @@
+{
+  "role": "docs",
+  "task": "/root/logistic_docs_build",
+  "requested_model": "gpt-6-luna",
+  "requested_effort": "medium",
+  "dispatch": "native/explicit",
+  "fork_turns": "none",
+  "no_nested_delegation": true,
+  "enforced_cli": false,
+  "fallback_reason": "CLI rejected requested Luna model for ChatGPT account; native explicit dispatch available",
+  "proof": "parent collaboration.spawn_agent inputs and returned canonical task names; no claim of CLI enforcement"
+}

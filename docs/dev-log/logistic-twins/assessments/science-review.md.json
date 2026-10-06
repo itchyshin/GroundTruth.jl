@@ -1,0 +1,35 @@
+{
+  "assessment_performed": true,
+  "draft_sha256": "2d4537c8780997648f346ff373a536dd8676ec377d4753e550f8b6c11ef53559",
+  "draft_version": "v3",
+  "requested_mode": "independent",
+  "assessor_type": "self",
+  "reviewer": "Fisher science review agent",
+  "method": "Separate manual source-backed technical prose review",
+  "genre": "technical completion review",
+  "coverage": "whole draft",
+  "score": 2,
+  "style_status": "assessed",
+  "score_reason": "Concrete defect and located evidence dominate; necessary review headings are mildly formulaic.",
+  "confidence": "medium",
+  "confidence_reason": "Subjective style judgment of a short technical report, not authorship inference.",
+  "examples": [
+    {
+      "location": "resolved finding",
+      "cue": "nonzero-width regression",
+      "impact": "States why the tolerance cannot hide the original defect.",
+      "repair": "no change needed",
+      "line": 9,
+      "quote": "Those assertions cannot admit the original collapsed interval through an absolute tolerance."
+    }
+  ],
+  "science_gate": "pass",
+  "science_gate_reason": "Source and language review remain accepted; inspected post-repair paired receipt supports bounded numerical agreement. Historical P1 remains explicitly resolved.",
+  "facts_gate": "pass",
+  "facts_gate_reason": "Inspected saved post-repair paired success receipt and final science.json; refreshed documentation scope line references. The parent owns overall closure and documentation acceptance.",
+  "references_gate": "pass",
+  "references_gate_reason": "All references are inspected local source/evidence locations; no external literature cited.",
+  "date": "2026-10-06",
+  "calibration_status": "Protocol examples seen; no held-out style controls used.",
+  "interpretation": "perceived_style_not_authorship"
+}

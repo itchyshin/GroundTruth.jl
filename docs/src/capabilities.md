@@ -1,45 +1,53 @@
 # Capabilities and limits
 
-## What works today
-
-| Model or feature | Current support | Limit |
+| Model or feature | Scope | Limit |
 |---|---|---|
-| Gaussian linear regression | Independent generator; OLS coefficients and t intervals | Targets alpha and beta |
-| Logistic regression | Independent Bernoulli generator; bounded Newton MLE and Wald intervals | Conditional log-odds; separation/instability can fail |
-| Gaussian random intercept oracle | Independent grouped generator; known-covariance GLS | Sigma and tau are supplied, not estimated |
-| Recovery | Bias, RMSE, Monte Carlo standard errors, coverage and Wilson uncertainty | Report accepted and usable-interval denominators |
-| Reproducibility | Replay, named data/adapter streams, copied paired data, provenance | Record Julia/RNG versions; no cross-version draw guarantee |
+| Gaussian linear regression | Independent generator; OLS coefficients and Student t intervals | Targets intercept `alpha` and slope `beta` |
+| Logistic fixed effects | Julia Bernoulli-logit generator and repaired MLE; native R GLM adapter in groundtruth | Conditional log odds; finite-MLE existence and convergence are checked |
+| Recovery | Bias, RMSE, Monte Carlo uncertainty, coverage and Wilson uncertainty | Report accepted and usable-interval denominators |
+| Reproducibility | Replay, named streams, copied paired data and provenance | Julia and R streams are distinct; no cross-version draw guarantee |
 | R exchange | CSV and optional identical-data R checks | No live R bridge |
-| Stan/TMB | Explicit Gaussian templates with conformance receipts | Export does not run or validate a fit |
+| Stan/TMB | Explicit Gaussian templates with conformance receipts | Export does not run or validate an engine fit |
 
-The repository status records 95 passing tests and independent R/TMB checks for the
-prototype. Those are saved verification results, not a new run performed while writing
-this page. Stan sampling was not rerun in this package. Small saved recovery runs are
-smoke evidence and do not establish general calibration or speed gains.
+Julia and R provide fixed-effect logistic workflows. The frozen-fixture numerical,
+package and local documentation checks passed; see [validation](validation.md) for
+versions and scope. The Gaussian random-intercept example is
+a known-covariance oracle with supplied variance components, not a fitted GLMM.
 
-
-## Gaussian random-intercept model
+## Logistic model and interpretation
 
 ```math
-y_i = \alpha + \beta x_i + u_{g(i)} + \sigma\epsilon_i,\qquad
-u_j\sim N(0,\tau^2),\quad\epsilon_i\sim N(0,1).
+Y_i \sim \operatorname{Bernoulli}(p_i), \qquad
+\operatorname{logit}(p_i)=\alpha+\beta x_i.
 ```
 
-The current random-intercept example supplies the generating `sigma` and `tau` to a
-known-covariance GLS oracle. It demonstrates recovery when the covariance is known;
-it does not estimate variance components.
+The coefficients are conditional log odds. The Julia implementation standardizes the
+predictor for fitting and transforms estimates and the full covariance back to the
+original coefficient scale. With default `tol=1e-9`, convergence requires a maximum
+absolute standardized mean score and maximum absolute standardized Newton correction
+to the linear predictor no greater than `tol`. Half the Newton decrement must be no
+greater than `tol^2 / 2`.
+Exact response-class support checks detect complete and quasi separation;
+rounded probabilities are not a separation test. A finite-MLE data set can still fail
+optimization, so finite-MLE existence and numerical convergence are separate questions.
 
-## What the intervals mean
+Julia and R use normal Wald coefficient intervals at 90% and 95%. Gaussian OLS retains
+Student t intervals. Logistic levels are requested as separate fits or studies. An
+interval-only failure can leave valid point estimates in the summaries.
 
-OLS uses coefficient t intervals. Logistic MLE uses normal Wald intervals, with
-separation and instability treated as failure conditions.
+## Gaussian random-intercept oracle
 
-## Reproducibility and scope
+The public example supplies the generating `sigma` and `tau` to known-covariance GLS.
+It demonstrates recovery when covariance is known. It does not estimate variance
+components or fit a GLMM.
 
-Replay and named random-number streams support repeatable studies within the
-recorded environment. No cross-version draw guarantee is claimed. No fitted GLMM,
-general translator or large calibration campaign has been completed.
-[Inspect validation](validation.md) before extending an example.
+## Scope
+
+A bounded numerical match on specified fixtures supports only those fixtures, quantities
+and tolerances. It does not establish calibration, mixed-model accuracy or
+package-wide Julia/R parity. The two languages draw independent streams; comparisons use
+shared frozen CSV inputs. No broad calibration, speed advantage or general model
+translation is claimed.
 
 ## API reference
 

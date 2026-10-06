@@ -1,0 +1,2 @@
+# Routing deviation
+Approved planned tiered-cli/enforced dispatch attempted Luna low. CLI model catalogue contained gpt-6-luna, but account returned invalid_request_error, unsupported model. No worker ran in that invocation. Existing CLI manifest/event error retained. Native explicit model/effort tools are used for approved roles; receipts retain the requested models and effort settings. Strict CLI enforcement was unavailable. No model ceiling expansion or nested delegation. Recon initial wrong-path claim corrected and source checked by parent.

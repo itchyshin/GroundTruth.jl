@@ -1,71 +1,60 @@
-# Factual status — 4 October 2026
+# Factual status: 6 October 2026
 
-## Completed locally
+## Implemented workflow
 
-- Gaussian linear-model vertical slice: independent data generator; explicit coefficient
-  truth; OLS t intervals; deterministic data/adapter stream keys; exception,
-  nonconvergence and invalid-estimate ledger; usable-interval and attempt denominators.
-- Bias/RMSE with Monte Carlo standard errors; conditional coverage with plug-in MCSE
-  and Wilson Monte Carlo intervals; covered-per-attempt fraction. Missing summaries
-  for all-failed cells and unknown MCSE for singleton cells.
-- Bounded logistic MLE and known-covariance Gaussian random-intercept GLS example.
-  The latter is an oracle, NOT a fitted GLMM or estimated variance-component model.
-- R-user README, symbolic alignment, explicit Gaussian Stan/TMB template exporter,
-  optional R reference scripts and synthetic outputs with provenance.
+The Julia package and R twin support Gaussian and one-predictor Bernoulli-logit
+studies. Julia uses the repaired fixed-effect logistic MLE; R provides a logistic
+family and native GLM adapter. Julia also retains the known-covariance Gaussian
+random-intercept GLS oracle. The checked numerical and failure contracts are
+described below.
 
-## Verified evidence
+## Historical verification retained from the 4 October status
 
-Julia 1.12.6, Distributions 0.25.131: **95 tests passed**, 0 failed/errors across
-seven test sets (`test/runtests.jl`). Tests cover independent scalar OLS formulas,
-replay/order invariance, mutation isolation, failures, mixed interval denominators,
-MCSE formulas/boundaries, reference template selection, logistic score/separation,
-known-covariance GLS, and a 100-replication Gaussian smoke test.
+The saved Julia prototype status recorded Julia 1.12.6 and Distributions 0.25.131, with
+95 passing assertions across seven test sets. Those tests covered independent scalar
+OLS formulas, replay/order invariance, mutation isolation, failure accounting,
+reference-template selection, logistic score/separation, the known-covariance oracle,
+and a 100-replication Gaussian smoke run. The saved Gaussian example attempted 100
+fits, all with finite coefficients and usable intervals. Its intercept bias was
+-0.005713 (MCSE 0.010965), slope bias -0.000566 (MCSE 0.013361), and coverage was 0.97
+(MCSE 0.017059) and 0.94 (MCSE 0.023749). These small-run results do not establish
+broad calibration.
 
-The saved `examples/linear.jl` run attempted 100 fits; all 100 yielded finite
-coefficients and usable intervals. Intercept bias -0.005713 (MCSE 0.010965), slope
-bias -0.000566 (MCSE 0.013361). Coverage 0.97 (MCSE 0.017059) and 0.94
-(MCSE 0.023749), respectively. These are smoke results, not broad calibration evidence.
+Saved same-data references included a base R `lm()` coefficient and exact t-endpoint
+discrepancy of 4.996004e-16 and a TMB 1.9.21 Gaussian template coefficient discrepancy
+of 9.182877e-11. The earlier native R `glm()` comparison was on the logistic reference
+fixture: coefficients and final-information Wald endpoints differed by 3.566036e-13.
+That is earlier reference evidence, distinct from the candidate paired-fixture
+cross-language check below.
 
-Independent reference checks on identical exported replication-1 data:
+A saved 20-replication logistic extension had intercept coverage 1.00 with Wilson
+Monte Carlo interval [0.839, 1.00]. This illustrates uncertainty with a small sample;
+it is not calibration evidence. The known-covariance Gaussian random-intercept example
+is an oracle with supplied `sigma` and `tau`, not an estimated variance-component model
+or fitted GLMM. Its saved checks do not establish mixed-model support.
 
-- Base R lm coefficients and exact t endpoints: maximum discrepancy 4.996004e-16.
-- TMB 1.9.21 template compiled; BFGS convergence code 0, maximum score below 1e-4;
-  coefficient discrepancy 9.182877e-11. Normalized log likelihood checked at a fixed
-  parameter point to 1e-9. TMB intervals were not compared with OLS intervals.
-- R glm coefficients and final-information Wald endpoints: discrepancy 3.566036e-13.
-- Independent R known-covariance random-intercept GLS: discrepancy 1.110223e-15.
+## Retained local validation
 
-Extension examples each attempted 20 fits, all usable. The random-intercept intercept
-coverage was 0.80 with Wilson Monte Carlo interval [0.584, 0.919]; slope coverage
-was 0.90 [0.699, 0.972]. These small runs do not establish calibration. Logistic
-intercept coverage was 1.00 [0.839, 1.00], illustrating why zero plug-in MCSE does
-not establish certainty. Full summaries and ledgers are retained in `results/`.
+The frozen-fixture numerical gate passed under Julia 1.12.6 and Distributions 0.25.131.
+It checked seven accepted data fits per engine, or 14 engine-by-fixture fits total,
+and five rejected designs per engine. The largest paired absolute differences were 6.87e-11 for coefficients,
+7.12e-12 for standard errors, 8.28e-11 for interval endpoints and 9.99e-16 for mean
+negative log likelihood. The core Julia suite passed 393 assertions across 16 suites.
 
-## Corrected during verification
+The R package check passed with 346 assertions under R 4.6.0 for development version
+0.0.0.9000, with `Status: OK` and no NOTE. The pkgdown 2.2.0 site preview rendered and
+its link and reference checks passed. The Julia Documenter 1.19.0 site build and local
+link checks also passed. Package and documentation gates passed.
 
-A test syntax error was corrected. A real adapter-input mutation bug was reproduced
-by a failing test and fixed by providing each adapter a copy of paired data. Test
-comparison of missing-valued rows now uses `isequal`. A strict-tolerance TMB nlminb
-attempt failed its convergence gate; an independently verified BFGS run replaced it.
-An R glm cached-covariance comparison differed by 1.4e-7 because the cached IRLS
-weights came from the preceding iteration; final-information comparison is explicit.
-These initial failures are not relabeled as passes.
+Julia and R streams are distinct; paired comparisons use identical frozen CSV bytes.
+The evidence covers one-predictor Bernoulli models with unit weights and reused
+references that were not newly refit. It supports bounded numerical agreement only. It
+does not establish interval calibration, a fitted GLMM, broad performance or
+package-wide cross-language parity.
 
-## Not run / future
+## Scope limits
 
-No Stan posterior sampling in this prototype. The exact explicit Gaussian Stan model
-was reused from yesterday's verified matched benchmark; exporting it is not a new
-posterior-validation result. No Turing adapter, arbitrary model translator, fitted
-GLMM/variance components, DRM/GLLVM integration, general target DSL, scheduler,
-checkpoint/resume, plotting infrastructure, campaign or speed claim. BayesDRM and
-BayesGLLVM remain paused. R/Stan/TMB remain optional; Julia core runs alone.
-
-No existing project environments were modified. Dependency resolution used cached
-packages in an isolated task depot; no new credentials or remote compute. No GitHub
-repository was created and nothing was pushed/deployed. Repository publication awaits
-separate scoped approval of exact owner and tracked payload.
-
-Scientific/factual gates: claims above are scoped to the saved local checks. Reference
-gate: copied Stan template and local R/TMB checks have explicit provenance; the wider
-framework review is parent-supplied context, not a new comprehensive audit here.
-Writing-naturalness assessment: NOTASSESSED under the hub's formal protocol.
+No fitted GLMM, broad calibration campaign, Stan posterior sampling result, speed
+advantage or general cross-language parity is claimed. Gaussian OLS continues to use
+Student t intervals; logistic MLE uses normal Wald intervals at separately requested
+90% and 95% levels.

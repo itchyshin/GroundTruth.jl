@@ -1,0 +1,27 @@
+{
+  "audit-verify.py": {
+    "sha256": "14d1bd64dcc4ef2b618bb968baf088a4f9be8a23155853ec34b8d76e268c5ca3",
+    "original_path": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/audit/logistic/verify.py",
+    "reused_not_refit": true
+  },
+  "audit-r.csv": {
+    "sha256": "6bd726000778ae7156a1e8eee30c9db71de30a5aa55a98a7282c306d1265fbed",
+    "original_path": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/audit/logistic/reference/r.csv",
+    "reused_not_refit": true
+  },
+  "audit-glm.csv": {
+    "sha256": "d3252a46070fc565e1ae3844e9d5270a31ff8583234d12a944942dc4c8f5c48d",
+    "original_path": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/audit/logistic/reference/glm.csv",
+    "reused_not_refit": true
+  },
+  "audit-glm-final.csv": {
+    "sha256": "0349eb6b7010ed88a0f19b1ad98d4326b71b9e6d6fe6676981b87d15fa6f9c63",
+    "original_path": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/audit/logistic/reference/glm-final.csv",
+    "reused_not_refit": true
+  },
+  "audit-contract.json": {
+    "sha256": "fbf2a2f98c9f7752409dcfe9a488cedbf9b09f2a23f3e68f52507567d08f1a45",
+    "original_path": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/audit/logistic/contract.json",
+    "reused_not_refit": true
+  }
+}

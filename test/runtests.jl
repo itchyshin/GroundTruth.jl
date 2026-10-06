@@ -156,3 +156,7 @@ end
         @test 0<r.coverage_mc_lower<1. && r.coverage_mc_upper≈1.
     end
 end
+
+# Shared frozen fixed-effect logistic regression contract.
+include("logistic_contract.jl")
+include("logistic_controls.jl")

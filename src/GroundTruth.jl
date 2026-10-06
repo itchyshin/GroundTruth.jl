@@ -81,23 +81,148 @@ function ols(d, rng; level=.95)
     se=sqrt.(diag(v*inv(Symmetric(X'X))))
     coefresult(b,se,quantile(TDist(length(d.y)-2),(1+level)/2))
 end
+# Bernoulli identities retain tails even when sigmoid(eta) rounds to one.
+logistic_sigmoid(eta) = eta >= 0 ? 1 / (1 + exp(-eta)) : exp(eta) / (1 + exp(eta))
+logistic_loss(eta, y) = max((1 - 2y) * eta, 0.) + log1p(exp(-abs(eta)))
+logistic_residual(eta, y) = y == 1 ? logistic_sigmoid(-eta) : -logistic_sigmoid(eta)
+logistic_weight(eta) = (v = exp(-abs(eta)); v / (1 + v)^2)
+
+function logistic_state(Z, y, gamma)
+    eta = Z * gamma
+    residual = logistic_residual.(eta, y)
+    weights = logistic_weight.(eta)
+    n = length(y)
+    loss = sum(logistic_loss.(eta, y)) / n
+    score = Z' * residual / n
+    information = Symmetric(Z' * (Z .* weights) / n)
+    factor = cholesky(information)
+    correction = factor \ score
+    (loss=loss, score=score, factor=factor, correction=correction,
+     decrement=dot(score, correction))
+end
+
+logistic_converged(state, Z, tol) =
+    maximum(abs, state.score) <= tol && maximum(abs, Z * state.correction) <= tol &&
+    state.decrement / 2 <= tol^2 / 2
+
+function logistic_result(gamma, state, c, s, n, level)
+    beta = gamma[2] / s
+    alpha = gamma[1] - c * beta
+    all(isfinite, (alpha, beta)) || return FitResult(Dict(); converged=false,
+        message="nonfinite coefficient transformation")
+    # Full covariance: A maps standardized gamma to the original intercept/slope.
+    # First center, then divide the slope coordinate, avoiding 0 * Inf artifacts.
+    C = Matrix(state.factor \ Matrix{Float64}(I, 2, 2)) / n
+    r = c / s
+    A = [1. -r; 0. 1.]
+    centered = A * C * A'
+    covariance = [centered[1,1] centered[1,2] / s;
+                  centered[2,1] / s centered[2,2] / s / s]
+    # Form SE before scaling twice: the raw variance can underflow/overflow
+    # even when the interval width is representable (e.g. s=1e200 or 1e-160).
+    standard_errors = (covariance[1,1] >= 0 ? sqrt(covariance[1,1]) : NaN,
+                       C[2,2] >= 0 ? sqrt(C[2,2]) / abs(s) : NaN)
+    estimates = Dict(:alpha=>alpha, :beta=>beta)
+    intervals = Dict{Symbol,Tuple{Float64,Float64}}()
+    unavailable = Symbol[]
+    q = quantile(Normal(), (1 + level) / 2)
+    for (j, target) in enumerate((:alpha, :beta))
+        se = standard_errors[j]
+        if isfinite(se) && se > 0
+            width = q * se
+            endpoints = (estimates[target] - width, estimates[target] + width)
+            if all(isfinite, endpoints)
+                intervals[target] = endpoints
+                continue
+            end
+        end
+        push!(unavailable, target)
+    end
+    message = isempty(unavailable) ? "" : "interval unavailable for " * join(string.(unavailable), ", ")
+    FitResult(estimates; intervals=intervals, message=message)
+end
+
+"""
+    logistic_mle(data, rng; level=.95, maxiter=80, tol=1e-9)
+
+Fit an intercept and one numeric predictor by Bernoulli-logit maximum likelihood.
+`tol` bounds the mean standardized score, the largest linear-predictor Newton
+correction, and the square root of the Newton decrement. Exact class-support
+checks exclude complete/quasi separation before optimization. Intervals are
+normal Wald intervals from final observed information in original units. When
+iterations remain, one additional Armijo-checked Newton update refines a point
+that first meets these bounds; `maxiter` still limits the number of updates.
+"""
 function logistic_mle(d, rng; level=.95, maxiter=80, tol=1e-9)
     d.family == :logistic || throw(ArgumentError("requires logistic data"))
-    0 < level < 1 || throw(ArgumentError("invalid level"))
-    X=hcat(ones(length(d.x)),d.x); b=zeros(2)
+    level isa Real && isfinite(level) && 0 < level < 1 || throw(ArgumentError("invalid level"))
+    maxiter isa Integer && maxiter >= 0 || throw(ArgumentError("maxiter must be a nonnegative integer"))
+    tol isa Real && isfinite(tol) && tol > 0 || throw(ArgumentError("tol must be finite and positive"))
+    d.x isa AbstractVector && d.y isa AbstractVector && length(d.x) == length(d.y) > 2 ||
+        throw(ArgumentError("finite equal-length numeric x and binary y with n > 2 required"))
+    all(v -> v isa Real && isfinite(v), d.x) &&
+        all(v -> v isa Real && isfinite(v) && v in (0, 1), d.y) ||
+        throw(ArgumentError("finite numeric x and numeric y exactly 0/1 required"))
+    x = Float64.(d.x); y = Float64.(d.y)
+    all(isfinite, x) || throw(ArgumentError("x must be representable as finite Float64"))
+    reject(message) = FitResult(Dict(); converged=false, message=message)
+    xmin, xmax = extrema(x)
+    xmin < xmax || return reject("constant predictor: rank-deficient design")
+    any(==(0.), y) && any(==(1.), y) || return reject("all-zero/all-one outcomes: no finite MLE")
+    a0, b0 = extrema(x[y .== 0]); a1, b1 = extrema(x[y .== 1])
+    (b0 < a1 || b1 < a0) && return reject("complete separation: no finite MLE")
+    (b0 == a1 || b1 == a0) && return reject("quasi separation: no finite MLE")
+    maxiter == 0 && return reject("iteration limit")
+    c = xmin / 2 + xmax / 2
+    s = maximum(abs, x .- c)
+    isfinite(c) && isfinite(s) && s > 0 || return reject("nonfinite predictor standardization")
+    Z = hcat(ones(length(x)), (x .- c) ./ s)
+    gamma = zeros(2)
+    state = try
+        logistic_state(Z, y, gamma)
+    catch e
+        e isa PosDefException || e isa SingularException || rethrow()
+        return reject("information is not positive definite")
+    end
     for k in 1:maxiter
-        p=1 ./ (1 .+ exp.(-(X*b)))
-        H=X'*(X .* (p.*(1 .- p)))
-        step=H\(X'*(d.y-p))
-        b += step
-        all(isfinite,b) && maximum(abs,b)<30 || return FitResult(Dict();converged=false,message="separation or unstable coefficients")
-        if maximum(abs,step)<tol
-            p=1 ./ (1 .+ exp.(-(X*b)))
-            H=X'*(X .* (p.*(1 .- p)))
-            return coefresult(b,sqrt.(diag(inv(Symmetric(H)))),quantile(Normal(),(1+level)/2))
+        all(isfinite, state.correction) && all(isfinite, state.score) &&
+            isfinite(state.loss) && isfinite(state.decrement) || return reject("nonfinite Newton state")
+        refine = logistic_converged(state, Z, tol)
+        # An exact fixed point needs no update. Otherwise use the remaining budget
+        # for one guarded refinement, improving accuracy after conversion of units.
+        refine && iszero(maximum(abs, state.correction)) &&
+            return logistic_result(gamma, state, c, s, length(y), level)
+        state.decrement > 0 || return reject("nonpositive Newton direction")
+        accepted = false
+        lambda = 1.
+        allowance = 8eps(Float64) * max(1., abs(state.loss))
+        for halving in 0:40
+            candidate = gamma + lambda * state.correction
+            if all(isfinite, candidate)
+                loss = sum(logistic_loss.(Z * candidate, y)) / length(y)
+                if isfinite(loss) && loss <= state.loss - 1e-4 * lambda * state.decrement + allowance
+                    gamma = candidate
+                    accepted = true
+                    break
+                end
+            end
+            lambda /= 2
+        end
+        accepted || return reject("Armijo line search failed")
+        # A small damped update is never a convergence test. Recompute all criteria.
+        state = try
+            logistic_state(Z, y, gamma)
+        catch e
+            e isa PosDefException || e isa SingularException || rethrow()
+            return reject("information is not positive definite")
+        end
+        all(isfinite, state.correction) && all(isfinite, state.score) &&
+            isfinite(state.loss) && isfinite(state.decrement) || return reject("nonfinite Newton state")
+        if logistic_converged(state, Z, tol) && (refine || k == maxiter)
+            return logistic_result(gamma, state, c, s, length(y), level)
         end
     end
-    FitResult(Dict();converged=false,message="iteration limit")
+    reject("iteration limit")
 end
 function oracle_gls(d, rng; sigma, tau, level=.95)
     d.family == :random_intercept || throw(ArgumentError("requires random-intercept data"))
@@ -128,6 +253,7 @@ function runstudy(scenarios, adapters; reps=10, seed=20261004)
                 try
                     result=a.fit(deepcopy(data),Xoshiro(fs))
                     result isa FitResult || throw(ArgumentError("adapter must return FitResult"))
+                    message=result.message
                     if !result.converged
                         status=:nonconverged; message=result.message
                     elseif !all(haskey(result.estimates,t) && isfinite(result.estimates[t]) for t in keys(truth(s)))

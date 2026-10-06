@@ -1,0 +1,8 @@
+{
+  "julia": "julia version 1.12.6",
+  "R_packages": "testthat 3.3.2 \nroxygen2 8.0.0 \npkgdown 2.2.0 \ndigest 0.6.39 \n",
+  "cached_only": true,
+  "threads": 1,
+  "routing": "native/explicit fallback; tiered CLI rejected requested Luna model",
+  "load_receipt": "Julia GroundTruth baseline loaded and rescaling regression reproduced"
+}

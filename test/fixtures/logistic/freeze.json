@@ -1,0 +1,33 @@
+{
+  "schema": "logistic-twins-fixtures-v1",
+  "source_root": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/audit/logistic",
+  "source_head": "3738bfe340fff62ec1afb0a78f0101babe79fbd7",
+  "original": {
+    "all_one.csv": "d89eae058eb683b6bbe0431edf3649efb02720a25717b877cd499d536e7fe08b",
+    "all_zero.csv": "4e059cc31619ed870d160dbd01b7b5a5f6200cd1bcd3e4271971a8f44e824040",
+    "analytic.csv": "d8943b8a18341a7b1f1702197ee5264692528bdae4abc3596ed665d8edbde0bc",
+    "asymmetric.csv": "99bb50ef96d443b0996a513ee2184cab360b3ebd5bf530c7b086c93dac7e42bb",
+    "complete.csv": "4fbbe5c25e5112d495f9706297a5960853dae4af0210ba4bf7fc6abcb92d98e1",
+    "constant.csv": "8f735984f4e725661537e210a968578be80a94ccb137e29d22215a13fb2cb15b",
+    "inverted.csv": "32300a226d09ecdac1a552622d448648d01d01a182e707f2caf7a2036506477e",
+    "quasi.csv": "a99110ad78f206a72ec06610f2845034cbe414a88ddbc8163302f67ba7c7bcc2",
+    "retained.csv": "90e5f5d70a45a14c6a315a8c776efde34ae4033cd94196b4e229d7d2e5303e1f",
+    "scaled.csv": "899aeef590142bfd2f5da1b479ae756e8aba12ab3e906a919a9df6f682ff61c0"
+  },
+  "sha256": {
+    "all_one.csv": "d89eae058eb683b6bbe0431edf3649efb02720a25717b877cd499d536e7fe08b",
+    "all_zero.csv": "4e059cc31619ed870d160dbd01b7b5a5f6200cd1bcd3e4271971a8f44e824040",
+    "analytic.csv": "d8943b8a18341a7b1f1702197ee5264692528bdae4abc3596ed665d8edbde0bc",
+    "asymmetric.csv": "99bb50ef96d443b0996a513ee2184cab360b3ebd5bf530c7b086c93dac7e42bb",
+    "complete.csv": "4fbbe5c25e5112d495f9706297a5960853dae4af0210ba4bf7fc6abcb92d98e1",
+    "constant.csv": "8f735984f4e725661537e210a968578be80a94ccb137e29d22215a13fb2cb15b",
+    "inverted.csv": "32300a226d09ecdac1a552622d448648d01d01a182e707f2caf7a2036506477e",
+    "quasi.csv": "a99110ad78f206a72ec06610f2845034cbe414a88ddbc8163302f67ba7c7bcc2",
+    "retained.csv": "90e5f5d70a45a14c6a315a8c776efde34ae4033cd94196b4e229d7d2e5303e1f",
+    "scaled.csv": "899aeef590142bfd2f5da1b479ae756e8aba12ab3e906a919a9df6f682ff61c0",
+    "shifted.csv": "432a637f65cdc844a246e6858cb090a21039c8fa00426742a9fd1beefa24f33c",
+    "tied.csv": "5e4b5aa0ce8882225ae57b20e059bbb86a8dab1a96824e6420e58d77364f1731"
+  },
+  "contract_sha256": "5095d6b97254a14108439c7f02c6246e2c845349ac10c6652e32bb420009331b",
+  "scientific_limits": "Bernoulli 0/1, one predictor, unit weights, normal Wald, no calibration/GLMM"
+}

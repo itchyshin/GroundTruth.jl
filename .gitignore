@@ -6,3 +6,7 @@ results/**/tmb-build/
 .DS_Store
 # Documenter-generated local build output.
 /docs/build/
+
+# Local logistic-twins execution state
+.unlazy/
+LOOP/
