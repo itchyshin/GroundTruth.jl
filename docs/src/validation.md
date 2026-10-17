@@ -46,3 +46,12 @@ The known-covariance Gaussian random-intercept GLS example is an oracle with sup
 variance components, not a fitted GLMM. No broad interval-calibration campaign, fitted
 mixed model, Stan posterior sampling result, speed advantage or general cross-language
 parity follows from the small saved examples or the bounded logistic comparison.
+
+## Gaussian random-intercept finite-design reliability
+
+The [reliability map](random-intercept-reliability.md) reports 30,000 shared datasets
+and 60,000 ML attempts across 15 scenarios. It retains 741 R fit errors and 274 Julia
+nonconvergences, conditional and all-attempt interval coverage, Monte Carlo uncertainty
+and all 1,414 numerical tolerance exceedances. Completion of this fixed sample does
+not establish strict numerical parity or universal calibration. The known-covariance
+GLS oracle and earlier fixed-effect checks remain separate evidence.

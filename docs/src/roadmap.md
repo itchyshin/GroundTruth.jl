@@ -1,10 +1,10 @@
 # Roadmap
 
-1. Local frozen-fixture, package and documentation checks for the Julia logistic MLE
-   repair and R logistic workflow are complete. Final bundle review and publication
-   approval remain separate decisions.
-2. Keep fitted Bernoulli random-intercept GLMM work as a separate proposal with explicit
-   estimands, approximation settings and same-data validation.
+1. Use the [random-intercept reliability map](random-intercept-reliability.md) to
+   inspect the fixed ML design, its failed fits, numerical differences and interval limits.
+2. Plan any investigation of the numerical discrepancies or improved few-group inference
+   separately. Broader non-Gaussian mixed models, alternative covariance structures and
+   further calibration studies need explicit estimands and validation.
 3. Run the explicit Stan Gaussian reference with its declared priors and sampling
    diagnostics if posterior sampling is needed. Posterior intervals need not match OLS.
 4. Audit named-schema data transport only if file exchange becomes a practical limit.

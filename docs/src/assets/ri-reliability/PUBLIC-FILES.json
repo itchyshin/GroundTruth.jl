@@ -1,0 +1,77 @@
+{
+  "files": {
+    "REPRODUCE.md": {
+      "bytes": 804,
+      "sha256": "8b251247da69d72f199458f868b480adc3bccbe0c3e4b04d3f192e7f56a6373b"
+    },
+    "figures/reliability-map.pdf": {
+      "bytes": 31452,
+      "sha256": "91710a5e1bc3e34c4b122f3091bb664e7142ba6afa55f56f03359c3f253b7e70"
+    },
+    "figures/reliability-map.png": {
+      "bytes": 186206,
+      "sha256": "d2790c4c0995d292439ebc457057677014b10f116d16340720183fd0d50bbd13"
+    },
+    "figures/reliability-map.svg": {
+      "bytes": 285297,
+      "sha256": "474dce236adf877d6ed9ca647a6aa0f033543a16543859127910359ad90c59b9"
+    },
+    "public-provenance.json": {
+      "bytes": 2029,
+      "sha256": "239c197300ca45d4dbcf47615cfb5a1c1ceb21552c7841a75462aa62bc2597af"
+    },
+    "reliability-map.md": {
+      "bytes": 10564,
+      "sha256": "a65518b8e05c5ee3dfcdf7b0d4ad34215a8f92b808b9676d25fbba9a5e0b0624"
+    },
+    "reproduce_figure.R": {
+      "bytes": 4228,
+      "sha256": "189f37b27b588dbef410325db22c79c460e1673f5ad2b78cd82f6d4172003e40"
+    },
+    "tables/boundary-counts.csv": {
+      "bytes": 1596,
+      "sha256": "22fcddd29509b8a6e66ee79f650aa17785c3893caa737cec9920b9b22773ec4a"
+    },
+    "tables/comparison-exceedance-records.csv": {
+      "bytes": 174019,
+      "sha256": "2cd5ae07462ac4befd21f6c85267f51c12e3f40b6746519df0fdcc9f04c303d7"
+    },
+    "tables/comparison-exceedances.csv": {
+      "bytes": 7007,
+      "sha256": "97eb86813ff03a8f67f8332c9180765d03b34c696d9289e58eadda39234692ec"
+    },
+    "tables/design.csv": {
+      "bytes": 2154,
+      "sha256": "7d04594be8c7b07f11cd45607c7c23e1cb6205818556a55e3380f6e4c5049f73"
+    },
+    "tables/failure-mechanisms.csv": {
+      "bytes": 1998,
+      "sha256": "09052673b2e551b4b4874faf25e76467d717430d8372857020ae029800d299a3"
+    },
+    "tables/interval-metrics.csv": {
+      "bytes": 27513,
+      "sha256": "544a80b46033309bcacae5fc443650901cd5f347ec4b7b66e827cf4a2e2ec8a8"
+    },
+    "tables/objective-discrepancies.csv": {
+      "bytes": 259,
+      "sha256": "01efb4cdf2bb810e5d18f6533582dbd9bc9963246fb9b18e301361bf4b4056e1"
+    },
+    "tables/paired-differences.csv": {
+      "bytes": 17214,
+      "sha256": "d3de312ad99956197217086bbda7fe6f36cd104f9a9c7af2a940cbcf30ff134b"
+    },
+    "tables/point-metrics.csv": {
+      "bytes": 32328,
+      "sha256": "9434af2061a12f7ac8a777a948daf4b3a6f5099987bfd0806b0e36e7ad914064"
+    },
+    "tables/status-counts.csv": {
+      "bytes": 2839,
+      "sha256": "5e6af4a26d683faa7b95df4be51a28835c0e60f2e2af8c4d93faff2d3808b1cc"
+    },
+    "tables/stratum-map.csv": {
+      "bytes": 9235,
+      "sha256": "c68cc277bf1bb6684576d1db5ddc53ae2f9288159b8bdbdd1a88493e75957249"
+    }
+  },
+  "selected_summary_bound": true
+}

@@ -1,0 +1,11 @@
+# Reproduce the reliability figure
+
+The portable tables contain one fixed finite-design study. To redraw the SVG, PDF and PNG with base R graphics, run from this bundle:
+
+```sh
+Rscript --vanilla reproduce_figure.R .
+```
+
+The script reads `tables/stratum-map.csv`; it loads no contributed R package and runs no model fit. It needs an R build with Cairo and PNG graphics support. The figure uses all 30 scenario-engine rows, 2,000 scheduled fits per row, and the 95% Wilson limits already recorded in the table. The full interval table also contains nominal 90% results.
+
+`public-provenance.json` binds the fixed input and analysis hashes. The point and interval tables keep their evaluable and scheduled denominators separately. Redrawing a figure is not a new simulation or a validation of other models.

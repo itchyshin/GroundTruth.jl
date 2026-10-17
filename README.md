@@ -3,13 +3,18 @@
 Generate independently. Fit anywhere. Compare against declared truth.
 
 This small Julia package checks statistical results against known generating values.
-Its public workflow targets the intercept `alpha` and slope `beta` in Gaussian and
-logistic regression, plus a known-covariance Gaussian random-intercept oracle. This
-version repairs the Julia logistic MLE; the R twin provides a native logistic workflow.
-The retained local checks passed 393 Julia assertions across 16 suites, frozen-fixture
-numerical checks and both documentation builds. Across seven paired, one-predictor
-Bernoulli fixtures with unit weights, seven accepted data fits per engine were checked,
-or 14 engine-by-fixture fits total, along with five rejected designs per engine. Maximum paired differences were 6.87e-11 for
+It supports Gaussian and logistic regression and an optional Gaussian
+random-intercept ML workflow with named coefficient and variance targets. See
+[the model guide](docs/src/random-intercept.md) and the
+[finite-design reliability map](docs/src/random-intercept-reliability.md).
+Observation-level predictors remain the default; group-level designs opt in with
+`x_level=:group`. The map retains failed fits, few-group undercoverage and numerical
+tolerance exceedances. It does not establish universal calibration or package-wide parity.
+The retained checks for the earlier fixed-effect workflows passed 393 Julia assertions
+across 16 suites, frozen-fixture numerical checks and both documentation builds. The
+paired logistic check covered seven accepted data fits per engine across seven one-predictor
+Bernoulli fixtures with unit weights, or 14 engine-by-fixture fits total, plus five rejected
+designs per engine. Maximum paired differences were 6.87e-11 for
 coefficients, 7.12e-12 for standard errors, 8.28e-11 for interval endpoints and
 9.99e-16 for mean negative log likelihood. The Julia checks used Julia 1.12.6 and
 Distributions 0.25.131. The R package check passed with 346 assertions under R 4.6.0;
@@ -88,8 +93,9 @@ the linear predictor to be at most `tol`; half the Newton decrement must be at m
 `tol^2 / 2`. These bounds are checked after recomputing the fit state. The score and
 correction bounds use standardized quantities.
 
-The R package adds a separate native `stats::glm()` binomial-logit adapter selected
-with `gt_glm_adapter()`. R and Julia use distinct random streams. Cross-language numerical
+The [separate R twin package](https://github.com/itchyshin/groundtruth) adds a native
+`stats::glm()` binomial-logit adapter selected with `gt_glm_adapter()`. R and Julia use
+distinct random streams. Cross-language numerical
 comparisons therefore use the same frozen CSV bytes; equal seed labels do not imply
 equal draws. Agreement on the bounded fixed-effect fixtures is not calibration evidence,
 GLMM evidence, or a claim of package-wide parity.
@@ -188,9 +194,10 @@ targets do not imply common priors, inference, variance estimators or intervals.
 Existing R simulation tools and Julia projects already implement much of the wider
 workflow. [The bounded plan](docs/PLAN.md) records the supplied reuse review. This package
 concentrates on independent truth, explicit statistical conformance, parameter mapping
-and failure accounting. The local work repairs the existing Julia fixed-effect logistic
-MLE and adds a native R Bernoulli-logit workflow. The Gaussian random-intercept example
-remains an oracle with known covariance, not a fitted GLMM. Before growing the package, audit and
-reuse an existing scheduler, plotting system or transport. DRM/GLLVM integrations, arbitrary estimands, Stan posterior comparison,
+and failure accounting. The fixed-effect logistic workflow and Gaussian random-intercept
+ML workflow have separate evidence scopes. The
+[reliability map](docs/src/random-intercept-reliability.md) records the bounded mixed-model
+results and their limits. Before growing the package, audit and reuse an existing
+scheduler, plotting system or transport. DRM/GLLVM integrations, arbitrary estimands, Stan posterior comparison,
 resumable campaigns and translation of arbitrary models are future work. BayesDRM and
 BayesGLLVM are paused. See [actual verification status](STATUS.md).

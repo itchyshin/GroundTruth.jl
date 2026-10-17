@@ -21,6 +21,8 @@ makedocs(
     pages=[
         "Home" => "index.md",
         "Quickstart" => "quickstart.md",
+        "Gaussian random intercept" => "random-intercept.md",
+        "Random-intercept reliability" => "random-intercept-reliability.md",
         "Capabilities" => "capabilities.md",
         "Validation" => "validation.md",
         "Roadmap" => "roadmap.md",
@@ -30,6 +32,16 @@ makedocs(
 # The local preview does not have deployment metadata; avoid missing script requests.
 write(joinpath(build_dir, "siteinfo.js"), "// Unversioned documentation site.\n")
 write(joinpath(build_dir, "versions.js"), "// No tagged documentation releases yet.\n")
+if get(ENV, "GITHUB_ACTIONS", "") != "true"
+    for (dir, _, files) in walkdir(build_dir), file in files
+        endswith(file, ".html") || continue
+        path=joinpath(dir,file)
+        relative=relpath(joinpath(build_dir,"versions.js"),dir)
+        html=read(path,String)
+        write(path,replace(html,r"src=\"(?:\.\./)+versions\.js\""=>"src=\"$relative\""))
+    end
+end
+
 
 if get(ENV, "GITHUB_ACTIONS", "") == "true"
     deploydocs(
