@@ -32,8 +32,8 @@ Y_i \sim \operatorname{Bernoulli}(p_i),\qquad
 \operatorname{logit}(p_i)=\alpha+\beta x_i.
 ```
 
-The public Julia fitter accepts the logistic family. This candidate repairs its bounded
-Newton MLE; intervals use final observed information and normal Wald quantiles.
+The public Julia fitter accepts the logistic family. Its MLE uses bounded Newton
+updates; intervals use final observed information and normal Wald quantiles.
 
 ```julia
 using GroundTruth

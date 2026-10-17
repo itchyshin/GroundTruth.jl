@@ -33,7 +33,7 @@ it is not calibration evidence. The known-covariance Gaussian random-intercept e
 is an oracle with supplied `sigma` and `tau`, not an estimated variance-component model
 or fitted GLMM. Its saved checks do not establish mixed-model support.
 
-## Retained local validation
+## Retained local validation of the earlier workflows
 
 The frozen-fixture numerical gate passed under Julia 1.12.6 and Distributions 0.25.131.
 It checked seven accepted data fits per engine, or 14 engine-by-fixture fits total,
@@ -58,3 +58,14 @@ No fitted GLMM, broad calibration campaign, Stan posterior sampling result, spee
 advantage or general cross-language parity is claimed. Gaussian OLS continues to use
 Student t intervals; logistic MLE uses normal Wald intervals at separately requested
 90% and 95% levels.
+
+## Gaussian random-intercept ML workflow
+
+The optional adapter provides a Gaussian random-intercept ML adapter with named targets
+`alpha`, `beta`, `sigma2`, and `tau2`. It is separate from the known-covariance GLS
+example and from the fixed-effect workflow already available on the published sites.
+Approximate normal plug-in intervals are defined for coefficients at 90% and 95%; variance
+targets are point-only. A valid boundary estimate `tau2 = 0` is retained. The
+[finite-design reliability map](docs/src/random-intercept-reliability.md) reports the
+complete 30,000-dataset paired sample, including failed fits, numerical discrepancies
+and few-group undercoverage. Strict parity and universal calibration are not established.

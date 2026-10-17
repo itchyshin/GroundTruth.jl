@@ -1,7 +1,9 @@
 module GroundTruth
 using Random, SHA, Statistics, LinearAlgebra, Distributions
-export Scenario, truth, generate, Adapter, FitResult, ols, logistic_mle, oracle_gls,
+export Scenario, ri_scenario, truth, generate, Adapter, FitResult, ols, logistic_mle, oracle_gls,
        runstudy, summarize, seedfor, replay, export_data, write_results, reference_bundle
+
+const RI_GENERATOR_REVISION = "random-intercept-v2"
 
 "A scenario is a data-generating contract; its id must be unique within a study."
 struct Scenario
@@ -13,16 +15,65 @@ struct Scenario
     sigma::Float64
     tau::Float64
     groups::Int
+    group_sizes::Union{Nothing,Vector{Int}}
+    x_level::Symbol
+    generator_revision::Union{Nothing,String}
     function Scenario(id; family=:gaussian, n=100, alpha=1., beta=.7,
-                      sigma=1.2, tau=.7, groups=10)
+                      sigma=1.2, tau=.7, groups=10, group_sizes=nothing,
+                      x_level=:observation)
         family in (:gaussian,:logistic,:random_intercept) || throw(ArgumentError("unknown family"))
+        x_level isa Symbol && x_level in (:observation, :group) ||
+            throw(ArgumentError("x_level must be :observation or :group"))
+        family == :random_intercept || x_level == :observation ||
+            throw(ArgumentError("group-level predictors require random-intercept data"))
         n > 2 && isfinite(alpha) && isfinite(beta) && isfinite(sigma) && sigma > 0 &&
             isfinite(tau) && tau >= 0 && 1 <= groups <= n || throw(ArgumentError("invalid scenario"))
         isempty(id) && throw(ArgumentError("empty id"))
-        new(String(id), family, n, alpha, beta, sigma, tau, groups)
+        sizes = if group_sizes === nothing
+            nothing
+        else
+            family == :random_intercept || throw(ArgumentError("explicit group sizes require random-intercept data"))
+            group_sizes isa AbstractVector && length(group_sizes) >= 2 &&
+                all(v->v isa Integer && !(v isa Bool) && v > 0, group_sizes) ||
+                throw(ArgumentError("group_sizes must be a positive integer vector with at least two groups"))
+            values = Int.(group_sizes)
+            any(>(1), values) && length(values) == groups && sum(values) == n ||
+                throw(ArgumentError("group_sizes must match n/groups and include within-group replication"))
+            values
+        end
+        revision = family == :random_intercept ? RI_GENERATOR_REVISION : nothing
+        new(String(id), family, n, alpha, beta, sigma, tau, groups, sizes, x_level, revision)
     end
 end
-truth(s::Scenario) = Dict(:alpha=>s.alpha, :beta=>s.beta)
+
+"Gaussian random-intercept scenario with explicit positive group sizes."
+function ri_scenario(id; group_sizes=fill(6,20), alpha=1., beta=.7, sigma=1., tau=.5,
+                     x_level=:observation)
+    group_sizes isa AbstractVector && length(group_sizes) >= 2 &&
+        all(v->v isa Integer && !(v isa Bool) && v > 0, group_sizes) &&
+        any(>(1), group_sizes) || throw(ArgumentError("positive integer group_sizes require at least two groups and some replication"))
+    sizes = Int.(group_sizes)
+    Scenario(id; family=:random_intercept, n=sum(sizes), groups=length(sizes),
+             alpha, beta, sigma, tau, group_sizes=sizes, x_level)
+end
+
+default_targets(s::Scenario) = s.family == :random_intercept ?
+    (:alpha, :beta, :sigma2, :tau2) : (:alpha, :beta)
+function validate_targets(s::Scenario, targets)
+    selected = targets === nothing ? default_targets(s) : Tuple(targets)
+    !isempty(selected) && all(t->t isa Symbol && t in default_targets(s), selected) ||
+        throw(ArgumentError("targets must be a nonempty subset of this family's named targets"))
+    length(unique(selected)) == length(selected) || throw(ArgumentError("duplicate target"))
+    selected
+end
+function truth(s::Scenario; targets=nothing)
+    values = Dict(:alpha=>s.alpha, :beta=>s.beta)
+    if s.family == :random_intercept
+        values[:sigma2] = s.sigma^2
+        values[:tau2] = s.tau^2
+    end
+    Dict(t=>values[t] for t in validate_targets(s, targets))
+end
 
 "Stable across Julia sessions; SHA-derived separate data/fit stream keys."
 function seedfor(base::Integer, scenario::String, rep::Integer, stream::String)
@@ -35,8 +86,11 @@ end
 
 "Independent generator. No fitted-model code, priors or estimator calls."
 function generate(s::Scenario, rng::AbstractRNG)
-    x = randn(rng,s.n)
-    group = [mod1(i,s.groups) for i in 1:s.n]
+    group = s.group_sizes === nothing ? [mod1(i,s.groups) for i in 1:s.n] :
+        reduce(vcat, [fill(g, count) for (g, count) in enumerate(s.group_sizes)])
+    # Keep the observation stream unchanged. Group mode draws once in canonical
+    # group order, then expands to rows before constructing the response.
+    x = s.x_level == :group ? randn(rng,s.groups)[group] : randn(rng,s.n)
     eta = s.alpha .+ s.beta .* x
     if s.family == :logistic
         p = 1 ./ (1 .+ exp.(-eta))
@@ -56,9 +110,13 @@ struct FitResult
     intervals::Dict{Symbol,Tuple{Float64,Float64}}
     converged::Bool
     message::String
+    diagnostics::NamedTuple
 end
-FitResult(e; intervals=Dict{Symbol,Tuple{Float64,Float64}}(), converged=true, message="") =
-    FitResult(Dict{Symbol,Float64}(e), Dict{Symbol,Tuple{Float64,Float64}}(intervals), converged, message)
+FitResult(e, intervals, converged, message; diagnostics=NamedTuple()) =
+    FitResult(Dict{Symbol,Float64}(e), Dict{Symbol,Tuple{Float64,Float64}}(intervals),
+              Bool(converged), String(message), diagnostics)
+FitResult(e; intervals=Dict{Symbol,Tuple{Float64,Float64}}(), converged=true, message="",
+          diagnostics=NamedTuple()) = FitResult(e, intervals, converged, message; diagnostics)
 
 "Adapter fit(data, rng) returns FitResult; metadata identifies priors and inference."
 struct Adapter{F}
@@ -234,10 +292,14 @@ function oracle_gls(d, rng; sigma, tau, level=.95)
 end
 
 "Serial bounded runner. Every adapter attempt has a ledger record, including failures."
-function runstudy(scenarios, adapters; reps=10, seed=20261004)
+function runstudy(scenarios, adapters; reps=10, seed=20261004, targets=nothing)
     reps>0 || throw(ArgumentError("reps must be positive"))
     length(unique(s.id for s in scenarios))==length(scenarios) || throw(ArgumentError("duplicate scenario id"))
     length(unique(a.id for a in adapters))==length(adapters) || throw(ArgumentError("duplicate adapter id"))
+    # Materialize once, including a one-shot target iterator, before any fit.
+    requested = targets === nothing ? nothing : Tuple(targets)
+    selected_targets = Dict(s.id=>validate_targets(s, requested) for s in scenarios)
+    expanded = any(s->s.family == :random_intercept, scenarios)
     ledger=NamedTuple[]; rows=NamedTuple[]
     for s in scenarios, rep in 1:reps
         ds=seedfor(seed,s.id,rep,"data")
@@ -245,7 +307,7 @@ function runstudy(scenarios, adapters; reps=10, seed=20261004)
         try data=generate(s,Xoshiro(ds)) catch e; generation_error=sprint(showerror,e) end
         for a in adapters
             fs=seedfor(seed,s.id,rep,"fit:"*a.id)
-            status=:ok; message=""; result=nothing
+            status=:ok; message=""; result=nothing; diagnostics=NamedTuple()
             start=time_ns()
             if data===nothing
                 status=:generation_error; message=generation_error
@@ -254,34 +316,71 @@ function runstudy(scenarios, adapters; reps=10, seed=20261004)
                     result=a.fit(deepcopy(data),Xoshiro(fs))
                     result isa FitResult || throw(ArgumentError("adapter must return FitResult"))
                     message=result.message
+                    diagnostics=deepcopy(result.diagnostics)
                     if !result.converged
                         status=:nonconverged; message=result.message
-                    elseif !all(haskey(result.estimates,t) && isfinite(result.estimates[t]) for t in keys(truth(s)))
+                    elseif !all(haskey(result.estimates,t) && isfinite(result.estimates[t]) for t in selected_targets[s.id])
                         status=:invalid_estimate; message="missing/nonfinite target"
+                    elseif s.family == :random_intercept &&
+                        (any(t->t ∉ default_targets(s) || !isfinite(result.estimates[t]), keys(result.estimates)) ||
+                         haskey(result.estimates,:sigma2) && result.estimates[:sigma2] <= 0 ||
+                         haskey(result.estimates,:tau2) && result.estimates[:tau2] < 0)
+                        status=:invalid_estimate; message="invalid random-intercept target name or variance"
+                    elseif s.family == :random_intercept && !ri_interval_scope(result)
+                        status=:invalid_estimate; message="unexpected interval target or level"
                     end
                 catch e
                     status=:fit_error; message=sprint(showerror,e)
                 end
             end
-            push!(ledger,(scenario=s.id,rep=rep,adapter=a.id,data_seed=ds,fit_seed=fs,
-                          status=status,message=message,seconds=(time_ns()-start)/1e9))
-            for (target,t) in sort!(collect(truth(s));by=first)
+            entry=(scenario=s.id,rep=rep,adapter=a.id,data_seed=ds,fit_seed=fs,
+                   status=status,message=message,seconds=(time_ns()-start)/1e9)
+            push!(ledger, expanded ? merge(entry,(; diagnostics)) : entry)
+            for (target,t) in sort!(collect(truth(s; targets=selected_targets[s.id]));by=first)
                 estimate=status==:ok ? result.estimates[target] : missing
-                interval=status==:ok ? get(result.intervals,target,nothing) : nothing
-                usable=interval!==nothing && all(isfinite,interval) && interval[1]<=interval[2]
-                lo=usable ? interval[1] : missing; hi=usable ? interval[2] : missing
-                push!(rows,(scenario=s.id,rep=rep,adapter=a.id,target=target,truth=t,
-                    estimate=estimate,lower=lo,upper=hi,usable_interval=usable,
-                    covered=usable ? lo<=t<=hi : missing))
+                levels = s.family == :random_intercept ?
+                    (target in (:alpha,:beta) ? (.90,.95) : (missing,)) :
+                    (get(a.metadata,:interval_level,.95),)
+                for level in levels
+                    expected = target in (:alpha,:beta)
+                    interval = status==:ok && expected ?
+                        (s.family == :random_intercept ? ri_interval(result,a,target,level) : get(result.intervals,target,nothing)) : nothing
+                    usable=(interval isa Tuple || interval isa AbstractVector) && length(interval)==2 &&
+                        all(v->v isa Real && isfinite(v),interval) && interval[1]<=interval[2]
+                    lo=usable ? interval[1] : missing; hi=usable ? interval[2] : missing
+                    row=(scenario=s.id,rep=rep,adapter=a.id,target=target,truth=t,
+                         estimate=estimate,lower=lo,upper=hi,usable_interval=usable,
+                         covered=usable ? lo<=t<=hi : missing)
+                    push!(rows, expanded ? merge(row,(; level,interval_expected=expected)) : row)
+                end
             end
         end
     end
-    (ledger=ledger,rows=rows,provenance=(julia=string(VERSION),seed=seed,reps=reps,
+    provenance=(julia=string(VERSION),seed=seed,reps=reps,
         rng="Xoshiro; SHA256 first 64 bits; algorithm v1",scenarios=collect(scenarios),
-        adapters=[(id=a.id,metadata=a.metadata) for a in adapters]))
+        adapters=[(id=a.id,metadata=a.metadata) for a in adapters])
+    expanded && (provenance=merge(provenance,(generator_revision=RI_GENERATOR_REVISION,)))
+    (ledger=ledger,rows=rows,provenance=expanded || targets !== nothing ?
+        merge(provenance,(targets=selected_targets,)) : provenance)
+end
+
+function ri_interval_scope(result)
+    all(t->t in (:alpha,:beta), keys(result.intervals)) || return false
+    levels = get(result.diagnostics,:intervals_by_level,nothing)
+    levels === nothing && return true
+    levels isa AbstractDict || return false
+    all(level->level in (.90,.95) && levels[level] isa AbstractDict &&
+        all(t->t in (:alpha,:beta),keys(levels[level])), keys(levels))
+end
+function ri_interval(result, adapter, target, level)
+    levels=get(result.diagnostics,:intervals_by_level,nothing)
+    levels !== nothing && haskey(levels,level) && return get(levels[level],target,nothing)
+    # Existing oracle/custom adapters have one declared primary level only.
+    level == get(adapter.metadata,:interval_level,.95) ? get(result.intervals,target,nothing) : nothing
 end
 mcse(v)=length(v)>1 ? std(v)/sqrt(length(v)) : missing
 function summarize(study)
+    !isempty(study.rows) && hasproperty(first(study.rows),:level) && return summarize_ri(study)
     out=NamedTuple[]
     cells=unique((r.scenario,r.adapter,r.target) for r in study.rows)
     for (scenario,adapter,target) in cells
@@ -306,6 +405,25 @@ function summarize(study)
             coverage_mc_lower=m>0 ? max(0.,center-half) : missing,
             coverage_mc_upper=m>0 ? min(1.,center+half) : missing,
             covered_per_attempt=attempted>0 ? sum(covers)/attempted : missing))
+    end
+    out
+end
+
+function summarize_ri(study)
+    cells=unique((r.scenario,r.adapter,r.target,r.level) for r in study.rows)
+    out=NamedTuple[]
+    for cell in cells
+        rows=filter(r->isequal((r.scenario,r.adapter,r.target,r.level),cell),study.rows)
+        # Reuse the unchanged Monte Carlo formulas on a single target/level.
+        plain=[(scenario=r.scenario,rep=r.rep,adapter=r.adapter,target=r.target,truth=r.truth,
+                estimate=r.estimate,lower=r.lower,upper=r.upper,usable_interval=r.usable_interval,
+                covered=r.covered) for r in rows]
+        row=only(summarize((rows=plain,)))
+        expected=count(r->r.interval_expected,rows)
+        covered=sum(Float64[r.covered for r in rows if r.usable_interval])
+        push!(out,merge(row,(level=cell[4],intervals_expected=expected,
+                            unusable_intervals=expected-row.usable_intervals,
+                            covered_per_attempt=expected>0 ? covered/expected : missing)))
     end
     out
 end

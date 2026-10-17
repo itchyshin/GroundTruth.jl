@@ -6,7 +6,7 @@
 <h2>How well does your estimator recover the truth?</h2>
 <p>Generate data from a known process. Fit the same data with your chosen engine. Measure recovery, including failures and missing intervals.</p>
 <div class="gt-actions"><a class="gt-button" href="quickstart.html">Run your first study</a><a class="gt-button gt-secondary" href="validation.html">See the validation scope</a></div>
-<span class="gt-prototype">Research prototype · Gaussian and logistic fixed effects</span></div>
+<span class="gt-prototype">Research prototype · Gaussian and logistic fixed effects, plus Gaussian random-intercept ML</span></div>
 <img class="gt-hero-logo" src="assets/logo.png" alt="GroundTruth.jl hex logo: noisy estimates compared with a known reference" width="240" height="240">
 </section>
 <div class="gt-cards">
@@ -28,8 +28,9 @@ those features.
 
 - [Gaussian regression](quickstart.md): independent draws, OLS estimates and Student t intervals.
 - [Logistic fixed effects](quickstart.md#Logistic-regression): Bernoulli-logit data and conditional log-odds targets.
-- [Capabilities and limits](capabilities.md): review fixed-effect models and the known-covariance oracle.
-- [Validation scope](validation.md): separate historical Gaussian evidence from bounded logistic checks.
+- [Gaussian random-intercept model](random-intercept.md): use the optional ML adapter, choose observation- or group-level predictors, and read its inference limits.
+- [Capabilities and limits](capabilities.md): review fixed-effect models, fitted random-intercept ML and the known-covariance oracle.
+- [Validation scope](validation.md): inspect the separate fixed-effect checks and random-intercept reliability map.
 
 ## From scenario to recovery
 
@@ -47,8 +48,9 @@ remain useful when its interval is unavailable.
 
 ## Publication and validation status
 
-Julia and the R twin provide Gaussian and logistic fixed-effect workflows. The
-implementations passed frozen-fixture, package and local documentation checks. The
-bounded results do not establish calibration, fitted mixed-model support or
-package-wide cross-language parity. See [validation](validation.md).
-The established R site is at [groundtruth](https://itchyshin.github.io/groundtruth/).
+Julia and the R twin provide Gaussian and logistic fixed-effect workflows and
+Gaussian random-intercept ML adapters. The [reliability map](random-intercept-reliability.md)
+retains 60,000 attempts across 15 scenarios, including failures, few-group undercoverage
+and numerical tolerance exceedances. See [validation](validation.md) for the separate evidence scopes.
+The R twin source is [GitHub: itchyshin/groundtruth](https://github.com/itchyshin/groundtruth),
+and its established site is [groundtruth](https://itchyshin.github.io/groundtruth/).

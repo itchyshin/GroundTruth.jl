@@ -4,15 +4,20 @@
 |---|---|---|
 | Gaussian linear regression | Independent generator; OLS coefficients and Student t intervals | Targets intercept `alpha` and slope `beta` |
 | Logistic fixed effects | Julia Bernoulli-logit generator and repaired MLE; native R GLM adapter in groundtruth | Conditional log odds; finite-MLE existence and convergence are checked |
+| Gaussian random intercept | Optional Julia ML adapter; the separate `groundtruth` R twin provides an optional `lme4` adapter; four named targets | Coefficient intervals are approximate normal plug-in intervals; variance targets are point-only |
+| Random-intercept predictor level | Supports `x_level=:observation` (default) and `:group`; group values expand in canonical group order | Group-level x changes unconditional response correlation; ICC is conditional on x |
 | Recovery | Bias, RMSE, Monte Carlo uncertainty, coverage and Wilson uncertainty | Report accepted and usable-interval denominators |
 | Reproducibility | Replay, named streams, copied paired data and provenance | Julia and R streams are distinct; no cross-version draw guarantee |
 | R exchange | CSV and optional identical-data R checks | No live R bridge |
 | Stan/TMB | Explicit Gaussian templates with conformance receipts | Export does not run or validate an engine fit |
 
-Julia and R provide fixed-effect logistic workflows. The frozen-fixture numerical,
-package and local documentation checks passed; see [validation](validation.md) for
-versions and scope. The Gaussian random-intercept example is
-a known-covariance oracle with supplied variance components, not a fitted GLMM.
+Julia and R provide fixed-effect logistic workflows. The retained frozen-fixture, package
+and documentation checks cover those earlier workflows; see [validation](validation.md)
+for versions and scope. The existing Gaussian random-intercept example is a known-covariance
+oracle with supplied variance components. The optional adapter fits the Gaussian
+random-intercept model by ML; see [the model guide](random-intercept.md). The
+[finite-design reliability map](random-intercept-reliability.md) reports failed fits,
+few-group undercoverage and numerical discrepancies without a blanket calibration claim.
 
 ## Logistic model and interpretation
 
@@ -35,13 +40,18 @@ Julia and R use normal Wald coefficient intervals at 90% and 95%. Gaussian OLS r
 Student t intervals. Logistic levels are requested as separate fits or studies. An
 interval-only failure can leave valid point estimates in the summaries.
 
-## Gaussian random-intercept oracle
+## Known-covariance Gaussian random-intercept oracle
 
 The public example supplies the generating `sigma` and `tau` to known-covariance GLS.
 It demonstrates recovery when covariance is known. It does not estimate variance
 components or fit a GLMM.
 
 ## Scope
+
+The random-intercept adapter reports point estimates for `alpha`, `beta`, `sigma2`, and
+`tau2`. Approximate normal plug-in intervals at 90% and 95% are provided for the two
+coefficients. Variance-component uncertainty is not represented by intervals, so variance
+coverage is unavailable. A converged boundary fit with `tau2 = 0` is valid.
 
 A bounded numerical match on specified fixtures supports only those fixtures, quantities
 and tolerances. It does not establish calibration, mixed-model accuracy or

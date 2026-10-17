@@ -160,3 +160,6 @@ end
 # Shared frozen fixed-effect logistic regression contract.
 include("logistic_contract.jl")
 include("logistic_controls.jl")
+
+# Random-intercept predictor-level amendment and default-stream regression.
+include("ri_xlevel.jl")

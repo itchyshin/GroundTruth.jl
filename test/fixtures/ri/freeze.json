@@ -1,0 +1,20 @@
+{
+  "sha256": {
+    "lmm-boundary-fixture-data.csv": "dcdbb35ce3ca63414f93930b9d378dbd6774af031aa35cc051a8be599c9c3402",
+    "lmm-weak-data.csv": "0bb13aa4b2c50c6293dcf45b08581222572214e6572396937253623f578487bc",
+    "lmm-zero-data.csv": "7fe20af9f4d6363f9ff7957d7066c7dccf6c5930bc6b3ca34922323f4ff408ab",
+    "lmm-unequal-data.csv": "47fe2e2f53b298c040a4cfa705cde71610c0fb17390f81366e59a6bb29b771a8",
+    "lmm-interior-fixture-data.csv": "5ff1decc8df6616e35b5fd523901925b47588fd7cf32b62990651cc0a53f5cb1",
+    "lmm-interior-data.csv": "877304a2e8579d3172907a2323d445f6149b828af1c3adf3ab9e5db6df3090f6"
+  },
+  "source": "/Users/z3437171/Documents/Codex/2026-10-04/task-6/GroundTruth-lmm/results/lmm",
+  "contract_sha256": "83e3c2260596a614e6099b366f01c412c6129ca81bc2625a36771f889565c34d",
+  "additional_sha256": {
+    "boundary-simple-data.csv": "272c544bce77ffa7642ec2ed1e507b0a8dec4e00a4661e63f4764c035439cd47",
+    "few-groups-data.csv": "ea610a4d308886227aeb7f6e14a9a9b860f3ec19bc235d463abd6c6d0d086c2c",
+    "mixed-singletons-data.csv": "2f07353b3d5aa5b4d3f84996b0a3745702adda5743ba12f771f82af7fbe68227",
+    "strong-unequal-data.csv": "fc2d7592c4772f3974bba9ed68dbd1058440ed8f6b0fe34446a73f897f52ab85",
+    "group-covariate-data.csv": "38aa394c784c8882726ecfc2b42a877e363263674cec67efc1ab33e9a5dfdd17",
+    "residual-degenerate-data.csv": "a9fa74e4df4aec366ea700bedc7ebb597411f3a48e2377e1170e40be17a28759"
+  }
+}
