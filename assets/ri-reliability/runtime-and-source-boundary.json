@@ -1,0 +1,29 @@
+{
+  "schema": "gt-ri-campaign-runtime-and-later-guard-correction-v1",
+  "campaign_runtime": {
+    "Julia": "1.12.6",
+    "MixedModels": "4.36.0",
+    "R": "4.6.1 (2026-06-24)",
+    "lme4": "2.0.6"
+  },
+  "local_verification_runtime": {
+    "R": "4.6.0",
+    "lme4": "2.0.1",
+    "Julia": "1.12.6"
+  },
+  "frozen_campaign_r_source_sha256": "7c1e257a5be5efb7a9b05060e111c97b3bd006b383e4e61300f77d4cacadb613",
+  "corrected_r_source_sha256": "e9212859b66b8843864e924c7b46f74a467b100faa1e3ed796a35a281acd2f5f",
+  "frozen_julia_adapter_sha256": "7e136f0dbbf7441590b3f5b7fe8d605a16ec8da2f8c435dc7883b04490b7598e",
+  "guard_correction": {
+    "change": "Remove absolute unit floor from residual-degeneracy tolerance; retain only within-group response and fitted-slope scale.",
+    "api_or_optimizer_control_change": false,
+    "campaign_rerun": false,
+    "branch_invariance_argument": "The corrected threshold is never larger than the old threshold. All 30000 R campaign attempts passed the old guard: 29259 accepted; 741 reached the later lme4 optimizer code-3 check. Therefore all pass the corrected guard as well. This is a control-flow argument, not a new fit or cross-version validation.",
+    "campaign_r_accepted": 29259,
+    "campaign_r_optimizer_code3": 741,
+    "regression_test_sha256": "a3ef7a1ddb98aa77146b075f8a2f20adf34adb0202f4e3ea0ed42e4ac54d3fe5"
+  },
+  "campaign_runtime_receipt_sha256": "366d71d8c91fbd25a75bf0e7954f2673818c7dbde4d9f72cd301a3fc935720d5",
+  "attempt_ledger_sha256": "2813dd2baf7858e723ff20a2d7be2cb38f1fe4d76802680bb65b46a5825d30b2",
+  "limits": "The reliability map retains the original frozen campaign results. The guard correction has local regression/package evidence, not a new campaign."
+}

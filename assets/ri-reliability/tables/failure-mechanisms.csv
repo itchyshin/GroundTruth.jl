@@ -1,0 +1,27 @@
+cell,engine,status,message,n
+main_g05_icc_0,lme4,fit_error,lme4 optimizer failed with code 3.,111
+main_g05_icc_0,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,45
+main_g05_icc_0p01,lme4,fit_error,lme4 optimizer failed with code 3.,81
+main_g05_icc_0p01,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,33
+main_g05_icc_0p2,lme4,fit_error,lme4 optimizer failed with code 3.,44
+main_g05_icc_0p2,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,18
+main_g05_icc_0p6,lme4,fit_error,lme4 optimizer failed with code 3.,16
+main_g05_icc_0p6,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,3
+main_g20_icc_0,lme4,fit_error,lme4 optimizer failed with code 3.,93
+main_g20_icc_0,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,36
+main_g20_icc_0p01,lme4,fit_error,lme4 optimizer failed with code 3.,86
+main_g20_icc_0p01,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,26
+main_g20_icc_0p2,lme4,fit_error,lme4 optimizer failed with code 3.,10
+main_g20_icc_0p2,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,1
+main_g20_icc_0p6,lme4,fit_error,lme4 optimizer failed with code 3.,10
+main_g50_icc_0,lme4,fit_error,lme4 optimizer failed with code 3.,89
+main_g50_icc_0,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,25
+main_g50_icc_0p01,lme4,fit_error,lme4 optimizer failed with code 3.,78
+main_g50_icc_0p01,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,28
+main_g50_icc_0p2,lme4,fit_error,lme4 optimizer failed with code 3.,1
+few_groups_g02_icc_0p2,lme4,fit_error,lme4 optimizer failed with code 3.,108
+few_groups_g02_icc_0p2,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,51
+unequal_g20_icc_0p2,lme4,fit_error,lme4 optimizer failed with code 3.,10
+unequal_g20_icc_0p2,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,5
+group_x_g20_icc_0p2,lme4,fit_error,lme4 optimizer failed with code 3.,4
+group_x_g20_icc_0p2,MixedModels,nonconverged,optimizer status ROUNDOFF_LIMITED,3
