@@ -4,7 +4,7 @@
 |---|---|---|
 | Gaussian linear regression | Independent generator; OLS coefficients and Student t intervals | Targets intercept `alpha` and slope `beta` |
 | Logistic fixed effects | Julia Bernoulli-logit generator and repaired MLE; native R GLM adapter in groundtruth | Conditional log odds; finite-MLE existence and convergence are checked |
-| Gaussian random intercept | Optional Julia ML adapter; the separate `groundtruth` R twin provides an optional `lme4` adapter; four named targets | Coefficient intervals are approximate normal plug-in intervals; variance targets are point-only |
+| Gaussian random intercept | Optional Julia and R adapters; choose ML or REML variance fitting and normal or ML-profile coefficient intervals; four named targets | Profile intervals are ML-only; variance targets are point-only; no method is guaranteed calibrated |
 | Random-intercept predictor level | Supports `x_level=:observation` (default) and `:group`; group values expand in canonical group order | Group-level x changes unconditional response correlation; ICC is conditional on x |
 | Recovery | Bias, RMSE, Monte Carlo uncertainty, coverage and Wilson uncertainty | Report accepted and usable-interval denominators |
 | Reproducibility | Replay, named streams, copied paired data and provenance | Julia and R streams are distinct; no cross-version draw guarantee |
@@ -15,7 +15,8 @@ Julia and R provide fixed-effect logistic workflows. The retained frozen-fixture
 and documentation checks cover those earlier workflows; see [validation](validation.md)
 for versions and scope. The existing Gaussian random-intercept example is a known-covariance
 oracle with supplied variance components. The optional adapter fits the Gaussian
-random-intercept model by ML; see [the model guide](random-intercept.md). The
+random-intercept model by ML or REML; see the [model guide](random-intercept.md)
+and [inference comparison guide](random-intercept-inference.md). The
 [finite-design reliability map](random-intercept-reliability.md) reports failed fits,
 few-group undercoverage and numerical discrepancies without a blanket calibration claim.
 
@@ -48,10 +49,12 @@ components or fit a GLMM.
 
 ## Scope
 
-The random-intercept adapter reports point estimates for `alpha`, `beta`, `sigma2`, and
-`tau2`. Approximate normal plug-in intervals at 90% and 95% are provided for the two
-coefficients. Variance-component uncertainty is not represented by intervals, so variance
-coverage is unavailable. A converged boundary fit with `tau2 = 0` is valid.
+The random-intercept adapters report point estimates for `alpha`, `beta`, `sigma2`, and
+`tau2`. The default normal method provides approximate plug-in intervals at 90% and 95%
+for the two coefficients under either ML or REML. ML can also request fixed-effect
+profile intervals with asymptotic likelihood-ratio cutoffs. These choices are not
+calibration guarantees. Variance-component uncertainty is not represented by intervals,
+so variance coverage is unavailable. A converged boundary fit with `tau2 = 0` is valid.
 
 A bounded numerical match on specified fixtures supports only those fixtures, quantities
 and tolerances. It does not establish calibration, mixed-model accuracy or

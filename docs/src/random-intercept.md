@@ -1,7 +1,8 @@
 # Gaussian random-intercept model
 
 The random-intercept workflow generates grouped Gaussian data and fits a marginal
-maximum-likelihood model with one fixed predictor and a random intercept:
+Gaussian model with one fixed predictor and a random intercept. The optional adapter
+uses ML by default and also accepts REML:
 
 ```math
  y_{ij} = \alpha + \beta x_{ij} + u_j + \epsilon_{ij},
@@ -45,7 +46,7 @@ study = runstudy([scenario], [adapter]; reps=2, seed=20261006)
 foreach(println, summarize(study))
 ```
 
-The adapter fits `y ~ 1 + x + (1 | group)` by maximum likelihood (`REML=false`). The
+This example fits `y ~ 1 + x + (1 | group)` by maximum likelihood (`REML=false`). The
 optional module keeps the mixed-model dependency out of the ordinary package path.
 `ri_scenario` accepts a vector of positive group sizes with at least two groups and at
 least one group containing multiple observations. Its total sample size is the sum of
@@ -100,7 +101,8 @@ gt_summarize(study)
 ```
 
 Install `lme4` separately to use this adapter. If it is unavailable, the adapter gives
-an actionable message. It fits the same Gaussian random-intercept model by ML. Scenario
+an actionable message. The default adapter fits the same Gaussian random-intercept
+model by ML; it also supports REML and ML profile intervals. Scenario
 construction, four-target scoring, coefficient interval levels, point-only variance
 summaries, and failure accounting follow the same contract as the Julia workflow.
 Legacy R scenarios and studies without `x_level` normalize to `"observation"` on replay.
@@ -111,3 +113,7 @@ These two-repetition examples explain the interface; they do not measure
 calibration. The separate [finite-design reliability map](random-intercept-reliability.md)
 retains all 60,000 attempts across 15 scenarios. It records few-group undercoverage
 and numerical tolerance exceedances. The earlier fixed-effect evidence has its own scope.
+
+For paired ML normal, REML normal and ML profile comparisons, see the
+[inference comparison guide](random-intercept-inference.md). It explains the
+finite-interval and finite-covered-yield denominators and typed interval outcomes.

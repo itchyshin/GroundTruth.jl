@@ -43,9 +43,11 @@ keep point acceptance, interval usability and native-engine diagnostics separate
 ## Historical and current limits
 
 The known-covariance Gaussian random-intercept GLS example is an oracle with supplied
-variance components, not a fitted GLMM. No broad interval-calibration campaign, fitted
-mixed model, Stan posterior sampling result, speed advantage or general cross-language
-parity follows from the small saved examples or the bounded logistic comparison.
+variance components, not a fitted GLMM. The retained fitted random-intercept evidence
+is the finite ML normal-interval design below; it does not assess REML or profile
+interval calibration. No Stan posterior sampling result, speed advantage or general
+cross-language parity follows from the small saved examples or the bounded logistic
+comparison.
 
 ## Gaussian random-intercept finite-design reliability
 

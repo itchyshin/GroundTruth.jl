@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-17",
+  "scope": "contract fixtures oracle only; no native fit",
+  "fixture_count": 11,
+  "valid_datasets": 9,
+  "expected_rejections": 2,
+  "independent_profile_datasets": 4,
+  "independent_profile_endpoints": 32,
+  "max_abs_profile_root_lr_residual": 3.108624468950438e-14,
+  "oracle_elapsed_seconds": 10.369510749995243,
+  "R_namespace_only_elapsed_seconds": 0.909,
+  "native_engine_budget_charge_seconds": 2,
+  "commands": [
+    {
+      "command": "python3 control/oracle/independent_gaussian.py --output control/oracle/reference.json",
+      "exit": 0,
+      "token": "INDEPENDENT_GAUSSIAN_ORACLE_OK 11",
+      "elapsed_seconds": 0.243
+    },
+    {
+      "command": "python3 control/oracle/independent_gaussian.py --profiles --output control/oracle/reference-with-profiles.json",
+      "exit": 0,
+      "token": "INDEPENDENT_GAUSSIAN_ORACLE_OK 11",
+      "elapsed_seconds": 10.369510749995243
+    },
+    {
+      "command": "Rscript --vanilla tests/inference/comparison.R",
+      "cwd": "groundtruth",
+      "exit": 0,
+      "token": "INFERENCE_ACCOUNTING_OK",
+      "elapsed_seconds": 0.398354833
+    }
+  ],
+  "hashes": [
+    {
+      "path": "control/CONTRACT.md",
+      "sha256": "65da20f24abc9f6df9c9367f2739ba0b71ddb70950dc6d1058d70fe655c37627"
+    },
+    {
+      "path": "control/fixtures/manifest.json",
+      "sha256": "c2e154c7a79c872809de5c4df3e6c30c7b670d0b83438385e3e35f5c11dec8b7"
+    },
+    {
+      "path": "control/fixtures/balanced_interior.csv",
+      "sha256": "b9177531711978f1e8bd11e9d35328c791a2e5c1ef21c28a1ef505ca075af019"
+    },
+    {
+      "path": "control/fixtures/boundary_zero.csv",
+      "sha256": "81b69503ebfc3646e05efc656d7c2e7b6578a107bd8cad2ea5d88d458321eb13"
+    },
+    {
+      "path": "control/fixtures/exact_residual_collapse.csv",
+      "sha256": "ef60bf09cfc910e4653515bd45b386ac640d7ef82e0ac0fc914eabeccfec09ff"
+    },
+    {
+      "path": "control/fixtures/near_residual_collapse.csv",
+      "sha256": "bfe26b09c97e1c4cf13ac43a74162f32683be30ade7a4efe8c4dd3a3b31fa7ee"
+    },
+    {
+      "path": "control/fixtures/predictor_shift_rescale.csv",
+      "sha256": "45d5579103195a5e4d254ad11e82247a72169f6f0e120a0b1f83725c92d07518"
+    },
+    {
+      "path": "control/fixtures/rank_deficient.csv",
+      "sha256": "6febb7a48c9f6a083e0b39022bd4b8c15477a33eef9891c3adc745aaa71df3ff"
+    },
+    {
+      "path": "control/fixtures/response_shift_rescale.csv",
+      "sha256": "f6812bc3cb5adcd15baab42ce80026fa66af8b5bfb9c507f43163cfc83aad1e2"
+    },
+    {
+      "path": "control/fixtures/six_group_group_x.csv",
+      "sha256": "7e02ae7459f328a7678d9551b6a8179ea5a31936ba9814a290faea4e36729b9b"
+    },
+    {
+      "path": "control/fixtures/two_group_group_x.csv",
+      "sha256": "f4fc529fcd6f9fc438a3f09006b368e3bb40f3a1d284f91f755ed903ec3679a4"
+    },
+    {
+      "path": "control/fixtures/two_group_within_x.csv",
+      "sha256": "39e05146d2c7a5f6381d40a2ff79d6dc911de38db6bb679e8667369f449a8a2e"
+    },
+    {
+      "path": "control/fixtures/unbalanced_singleton.csv",
+      "sha256": "4378e2efb0a58ddc7c6293604d088ff73a105f6ec250694bfa5d49b6bba6768a"
+    },
+    {
+      "path": "control/oracle/README.md",
+      "sha256": "79634f882dda2ba02a96ea860fb3ec9dfd0c27445d43b9ceea18f124d8832a99"
+    },
+    {
+      "path": "control/oracle/cached-julia-profile-source.json",
+      "sha256": "943f71a576f400261517949a71163518b1bda2fd7823a385fdd12e6b28302170"
+    },
+    {
+      "path": "control/oracle/cached-r-profile-api.txt",
+      "sha256": "72f3bbbd414b0e6b5080d043673fbd92024948bc0e30b6f3ad379a6ec44ce04c"
+    },
+    {
+      "path": "control/oracle/comparison-review.md",
+      "sha256": "b2e9813a74b1c3ff8110b51f2178e46813c14b1dfbae896cb3cf3f99ca800b80"
+    },
+    {
+      "path": "control/oracle/freeze_fixtures.py",
+      "sha256": "3768acec1f79d0a8679d674db113b97a7d1d65ec0deb06b5de090bbb5f78d527"
+    },
+    {
+      "path": "control/oracle/independent_gaussian.py",
+      "sha256": "af21e1d7b8aafb47e9076dc081dec040834253cd4e686901b0da2183de064b14"
+    },
+    {
+      "path": "control/oracle/reference-with-profiles.json",
+      "sha256": "a55df1682de3d694068721c8945122aebc8d2d1243c2301ab3d320bf8940010c"
+    },
+    {
+      "path": "control/oracle/reference.json",
+      "sha256": "bdc2db39fc099c73f990fe802cefe41648296b5a2d20ad7e9283e36e216f0e30"
+    }
+  ]
+}
