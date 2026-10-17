@@ -1,0 +1,1 @@
+Shared Phase I validation artifacts copied byte-for-byte from the approved control bundle. No production optimizer imports this validation code. The shared fixture manifest and independent oracle are frozen before native outcomes. Verification reads retained source-bound captures; it never launches a campaign.

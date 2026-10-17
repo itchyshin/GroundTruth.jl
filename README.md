@@ -4,9 +4,12 @@ Generate independently. Fit anywhere. Compare against declared truth.
 
 This small Julia package checks statistical results against known generating values.
 It supports Gaussian and logistic regression and an optional Gaussian
-random-intercept ML workflow with named coefficient and variance targets. See
+random-intercept workflow with named coefficient and variance targets. See
 [the model guide](docs/src/random-intercept.md) and the
-[finite-design reliability map](docs/src/random-intercept-reliability.md).
+[inference comparison guide](docs/src/random-intercept-inference.md) for ML or REML
+variance fitting and ML coefficient intervals. The
+[finite-design reliability map](docs/src/random-intercept-reliability.md) records
+the earlier ML normal-interval results.
 Observation-level predictors remain the default; group-level designs opt in with
 `x_level=:group`. The map retains failed fits, few-group undercoverage and numerical
 tolerance exceedances. It does not establish universal calibration or package-wide parity.
@@ -195,7 +198,7 @@ Existing R simulation tools and Julia projects already implement much of the wid
 workflow. [The bounded plan](docs/PLAN.md) records the supplied reuse review. This package
 concentrates on independent truth, explicit statistical conformance, parameter mapping
 and failure accounting. The fixed-effect logistic workflow and Gaussian random-intercept
-ML workflow have separate evidence scopes. The
+ML/REML inference choices have separate evidence scopes. The
 [reliability map](docs/src/random-intercept-reliability.md) records the bounded mixed-model
 results and their limits. Before growing the package, audit and reuse an existing
 scheduler, plotting system or transport. DRM/GLLVM integrations, arbitrary estimands, Stan posterior comparison,

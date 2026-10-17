@@ -6,6 +6,7 @@ using StatsModels: @formula
 using Distributions: Normal, quantile
 using LinearAlgebra: Symmetric, cholesky, rank, I, inv, norm, dot
 using Logging
+using Serialization
 
 export lmm_ml
 
@@ -77,6 +78,14 @@ function reject_residual_collapse(x,y,group)
     nothing
 end
 
+# Uniform internal stopping precision for base fits and profile-helper refits.
+# Keep evaluation limits and all other native optimizer controls unchanged.
+function configure_optimizer_precision!(o)
+    o.ftol_rel=1e-12
+    o.ftol_abs=1e-12
+    o
+end
+
 function optimizer_controls(o)
     (; maxfeval=o.maxfeval,ftol_rel=o.ftol_rel,ftol_abs=o.ftol_abs,
        xtol_rel=o.xtol_rel,xtol_abs=copy(o.xtol_abs),maxtime=o.maxtime,
@@ -84,11 +93,12 @@ function optimizer_controls(o)
        xtol_zero_abs=o.xtol_zero_abs,ftol_zero_abs=o.ftol_zero_abs,
        backend=o.backend,optimizer=o.optimizer)
 end
-function fit_diagnostics(m; observed_groups,warnings,boundary=missing,exact_zero=missing,near_boundary=missing)
+function fit_diagnostics(m; observed_groups,warnings,criterion,boundary=missing,exact_zero=missing,near_boundary=missing)
     o=m.optsum
     (; objective=o.fmin/2,optimizer=o.optimizer,optimizer_status=o.returnvalue,
        evaluations=o.feval,optimizer_controls=optimizer_controls(o),accepted_statuses=ACCEPTED_STATUSES,
-       criterion=:ML,formula="y ~ 1 + x + (1 | group)",engine="MixedModels",
+       criterion,objective_convention=criterion==:ML ? :gaussian_ml_nll : :explicit_restricted_gaussian_nll,
+       formula="y ~ 1 + x + (1 | group)",engine="MixedModels",
        engine_version=string(Base.pkgversion(MixedModels)),boundary,issingular=boundary,
        exact_zero,near_boundary,near_boundary_threshold=1e-8,observed_groups,
        weak_group_information=observed_groups<5,warnings=copy(warnings),
@@ -121,6 +131,135 @@ function coefficient_inference(table,estimates)
     (; intervals_by_level=by_level,covariance=C,interval_failures=failures)
 end
 
+"""Whether the design gives REML residual degrees of freedom for group means."""
+function information_limit(d)
+    labels=string.(d.group)
+    groups=unique(labels)
+    group_constant_x=all(g->begin
+        indices=findall(==(g),labels)
+        all(==(first(d.x[indices])),d.x[indices])
+    end,groups)
+    limited=length(groups)==2 && group_constant_x
+    message=limited ?
+        "two groups with group-constant x have zero residual group-mean degrees of freedom; REML tau2 is not identified" :
+        nothing
+    (; reml_tau2_identified=!limited,message)
+end
+
+function empty_profile_result()
+    levels=Dict(level=>Dict{Symbol,Tuple{Float64,Float64}}() for level in INTERVAL_LEVELS)
+    keys=Tuple{Symbol,Float64}[(target,level) for target in (:alpha,:beta) for level in INTERVAL_LEVELS]
+    (; intervals_by_level=levels,
+       inference_status=Dict(key=>:incomplete for key in keys),
+       profile_residuals=Dict{Tuple{Symbol,Float64},Union{Missing,Float64}}(key=>missing for key in keys),
+       profile_endpoint_distances=Dict{Tuple{Symbol,Float64},Union{Missing,Float64}}(key=>missing for key in keys),
+       profile_message=Dict(key=>"profile did not produce a validated endpoint" for key in keys))
+end
+
+"Apply terminal or partial native helper output without discarding accepted pairs."
+function apply_profile_payload!(result,status,message,result_data)
+    processed=result_data===nothing ? Set{Tuple{Symbol,Float64}}() : Set(result_data.processed)
+    for key in keys(result.inference_status)
+        if key in processed
+            result.inference_status[key]=get(result_data.inference_status,key,:error)
+            result.profile_message[key]=get(result_data.profile_message,key,message)
+            if haskey(result_data.intervals,key)
+                result.intervals_by_level[key[2]][key[1]]=result_data.intervals[key]
+                result.profile_residuals[key]=get(result_data.profile_residuals,key,missing)
+            end
+        else
+            state=status==:timeout ? :timeout : status==:invalid ? :invalid : :error
+            result.inference_status[key]=state
+            result.profile_message[key]=message
+        end
+    end
+    result
+end
+
+function run_profile_helper(table,estimates,maxfeval,timeout)
+    Sys.isunix() || return merge(empty_profile_result(),(; profile_elapsed=0.,profile_elapsed_seconds=0.,profile_timeout=timeout,
+        profile_message=Dict(key=>"hard profile timeout is unsupported on this platform" for key in keys(empty_profile_result().inference_status)),
+        inference_messages=Dict(key=>"hard profile timeout is unsupported on this platform" for key in keys(empty_profile_result().inference_status)),
+        inference_status=Dict(key=>:error for key in keys(empty_profile_result().inference_status)),
+        profile_endpoint_distances=Dict(key=>missing for key in keys(empty_profile_result().inference_status))))
+    started=time()
+    result=empty_profile_result()
+    workdir=mktempdir()
+    input=joinpath(workdir,"input.bin"); output=joinpath(workdir,"output.bin")
+    stdout_path=joinpath(workdir,"stdout.log"); stderr_path=joinpath(workdir,"stderr.log")
+    open(input,"w") do io
+        Serialization.serialize(io,(x=table.x,y=table.y,group=table.group,expected=estimates,maxfeval))
+    end
+    project=normpath(joinpath(@__DIR__,"..",".."))
+    adapter_project=joinpath(@__DIR__)
+    julia=Base.julia_cmd()
+    inherited_loadpath=get(ENV,"JULIA_LOAD_PATH","@")
+    loadpath=string(inherited_loadpath,Sys.iswindows() ? ';' : ':',adapter_project)
+    cmd=addenv(`$julia --startup-file=no --compiled-modules=no --compile=min -O0 --threads=1 --project=$project $(@__DIR__)/inference_profile_helper.jl $input $output`,
+             "JULIA_LOAD_PATH"=>loadpath,
+             "JULIA_NUM_THREADS"=>"1","JULIA_PKG_OFFLINE"=>"true",
+             "JULIA_PKG_PRECOMPILE_AUTO"=>"0","JULIA_SCRATCH_TRACK_ACCESS"=>"0",
+             "OPENBLAS_NUM_THREADS"=>"1","OMP_NUM_THREADS"=>"1",
+             "MKL_NUM_THREADS"=>"1","VECLIB_MAXIMUM_THREADS"=>"1")
+    proc=nothing
+    status=:error; message="profile helper failed"; result_data=nothing
+    helper_stdout=""; helper_stderr=""
+    try
+        proc=run(pipeline(cmd,stdout=stdout_path,stderr=stderr_path);wait=false)
+        deadline=started+timeout
+        while process_running(proc) && time()<deadline
+            sleep(.02)
+        end
+        if process_running(proc)
+            kill(proc,Base.SIGKILL)
+            wait(proc)
+            status=:timeout; message="profile helper exceeded wall deadline"
+            isfile(output) && (result_data=open(Serialization.deserialize,output))
+        else
+            wait(proc)
+            helper_stdout=isfile(stdout_path) ? read(stdout_path,String) : ""
+            helper_stderr=isfile(stderr_path) ? read(stderr_path,String) : ""
+            length(helper_stdout)>8192 && (helper_stdout=last(helper_stdout,8192))
+            length(helper_stderr)>8192 && (helper_stderr=last(helper_stderr,8192))
+            if isfile(output)
+                result_data=open(Serialization.deserialize,output)
+                status=success(proc) ? result_data.status : :error
+                message=success(proc) ? result_data.message : "profile helper exited unsuccessfully: "*result_data.message
+                if status!=:ok && !isempty(helper_stderr)
+                    message *= "\nhelper stderr: "*helper_stderr
+                end
+            else
+                status=:error
+                message=isempty(helper_stderr) ? "profile helper exited without a result" : helper_stderr
+            end
+        end
+    catch e
+        e isa InterruptException && rethrow()
+        status=:error; message=sprint(showerror,e)
+        if proc!==nothing && process_running(proc)
+            kill(proc,Base.SIGKILL); wait(proc)
+        end
+    finally
+        proc!==nothing && process_running(proc) && (kill(proc,Base.SIGKILL);wait(proc))
+        if isfile(stdout_path)
+            helper_stdout=read(stdout_path,String)
+            length(helper_stdout)>8192 && (helper_stdout=last(helper_stdout,8192))
+        end
+        if isfile(stderr_path)
+            helper_stderr=read(stderr_path,String)
+            length(helper_stderr)>8192 && (helper_stderr=last(helper_stderr,8192))
+        end
+        rm(workdir;recursive=true,force=true)
+    end
+    elapsed=time()-started
+    apply_profile_payload!(result,status,message,result_data)
+    merge(result,(profile_elapsed=elapsed,profile_elapsed_seconds=elapsed,profile_timeout=timeout,
+                  profile_helper_status=status,profile_helper_message=message,
+                  profile_helper_stdout=helper_stdout,profile_helper_stderr=helper_stderr,
+                  profile_endpoint_distances=Dict(key=>missing for key in keys(result.inference_status)),
+                  inference_messages=result.profile_message))
+end
+
 function result_with_intervals(estimates,diagnostics,build_intervals)
     by_level=Dict(level=>Dict{Symbol,Tuple{Float64,Float64}}() for level in INTERVAL_LEVELS)
     failure=nothing
@@ -139,25 +278,43 @@ end
 """
     lmm_ml(data, rng; level=.95, maxfeval=10_000)
 
-Gaussian ML for `y ~ 1 + x + (1 | group)`. Returns coefficient and variance
-points, primary 95% coefficient Wald intervals, and both 90%/95% intervals in
-`diagnostics.intervals_by_level`. Variance intervals are not expected. The fit is
-deterministic and never reads truth fields. Only the declared 95% primary level
-is accepted; the two coefficient levels use one fit and the same covariance.
+Gaussian ML or REML for `y ~ 1 + x + (1 | group)`. Returns coefficient and variance
+points, primary 95% coefficient intervals, and both 90%/95% intervals in
+`diagnostics.intervals_by_level`. Fixed-effect profiles are ML-only and run in a
+killable helper after the accepted base fit. Variance intervals are not expected.
+The fit is deterministic and never reads truth fields. Both levels use one fit.
 """
-function lmm_ml(d,rng;level=.95,maxfeval=10_000)
+function lmm_ml(data,rng;level=.95,maxfeval=10_000,criterion=:ML,interval_method=:normal,profile_timeout=60.0)
     level==.95 || throw(ArgumentError("primary interval level must be .95; both .90 and .95 are returned"))
+    criterion in (:ML,:REML) || throw(ArgumentError("criterion must be :ML or :REML"))
+    interval_method in (:normal,:profile) || throw(ArgumentError("interval_method must be :normal or :profile"))
+    profile_timeout isa Real && !(profile_timeout isa Bool) && isfinite(profile_timeout) && profile_timeout>0 ||
+        throw(ArgumentError("profile_timeout must be positive and finite"))
+    criterion==:REML && interval_method==:profile &&
+        throw(ArgumentError("fixed-effect profile intervals are available only with criterion=:ML"))
     maxfeval isa Integer && !(maxfeval isa Bool) && maxfeval>0 ||
         throw(ArgumentError("maxfeval must be a positive integer"))
+    d=data
     table=checked_data(d); observed_groups=length(unique(table.group))
     model=MixedModels.MixedModel(LMM_FORMULA,table;contrasts=Dict(:group=>MixedModels.Grouping()))
     model.optsum.maxfeval=maxfeval
+    configure_optimizer_precision!(model.optsum)
     warnings=String[]
     with_logger(WarningRecorder(current_logger(),warnings)) do
-        MixedModels.fit!(model;REML=false,progress=false)
+        MixedModels.fit!(model;REML=criterion==:REML,progress=false)
     end
-    diagnostics=fit_diagnostics(model;observed_groups,warnings)
+    diagnostics=merge(fit_diagnostics(model;observed_groups,warnings,criterion),
+        (;interval_method,profile_timeout,interval_levels=INTERVAL_LEVELS,
+          information_limit=information_limit(d)))
     if model.optsum.returnvalue ∉ ACCEPTED_STATUSES
+        failed_keys=[(target,level) for target in (:alpha,:beta) for level in INTERVAL_LEVELS]
+        diagnostics=merge(diagnostics,(;
+            inference_status=Dict(key=>:error for key in failed_keys),
+            profile_residuals=Dict(key=>missing for key in failed_keys),
+            profile_endpoint_distances=Dict(key=>missing for key in failed_keys),
+            profile_elapsed=0.,profile_elapsed_seconds=0.,
+            profile_message=Dict(key=>"base fit was not accepted" for key in failed_keys),
+            inference_messages=Dict(key=>"base fit was not accepted" for key in failed_keys)))
         return FitResult(Dict{Symbol,Float64}();converged=false,
                          message="optimizer status $(model.optsum.returnvalue)",diagnostics)
     end
@@ -179,10 +336,50 @@ function lmm_ml(d,rng;level=.95,maxfeval=10_000)
     end
     ratio=tau2/sigma2
     icc=ratio<=1 ? ratio/(1+ratio) : 1/(1+sigma2/tau2)
-    diagnostics=fit_diagnostics(model;observed_groups,warnings,
+    diagnostics=fit_diagnostics(model;observed_groups,warnings,criterion,
                                 boundary=MixedModels.issingular(model),exact_zero=iszero(tau2),
                                 near_boundary=icc<=1e-8)
-    result_with_intervals(estimates,diagnostics,()->coefficient_inference(table,estimates))
+    base_snapshot=deepcopy(estimates)
+    info_limit=information_limit(d)
+    interval_failure=nothing
+    interval_result=try
+        coefficient_inference(table,base_snapshot)
+    catch e
+        e isa InterruptException && rethrow()
+        interval_failure=sprint(showerror,e)
+        empty=(Dict(level=>Dict{Symbol,Tuple{Float64,Float64}}() for level in INTERVAL_LEVELS),
+               nothing,Dict{Tuple{Symbol,Float64},String}())
+        (;intervals_by_level=empty[1],covariance=empty[2],interval_failures=empty[3])
+    end
+    method_result=interval_method==:normal ?
+        merge(interval_result,(interval_method=:normal,inference_status=Dict((t,l)=>haskey(interval_result.intervals_by_level[l],t) ? :finite : :error for t in (:alpha,:beta) for l in INTERVAL_LEVELS),
+              profile_residuals=Dict((t,l)=>missing for t in (:alpha,:beta) for l in INTERVAL_LEVELS),
+              profile_endpoint_distances=Dict((t,l)=>missing for t in (:alpha,:beta) for l in INTERVAL_LEVELS),
+              profile_elapsed=0.,profile_elapsed_seconds=0.,profile_timeout=profile_timeout,
+              profile_message=Dict((t,l)=>interval_failure for t in (:alpha,:beta) for l in INTERVAL_LEVELS),
+              inference_messages=Dict((t,l)=>interval_failure for t in (:alpha,:beta) for l in INTERVAL_LEVELS))) :
+        begin
+            profile=try
+                run_profile_helper(table,base_snapshot,maxfeval,profile_timeout)
+            catch e
+                e isa InterruptException && rethrow()
+                result=empty_profile_result()
+                message=sprint(showerror,e)
+                merge(result,(;profile_elapsed=0.,profile_elapsed_seconds=0.,profile_timeout,
+                    profile_helper_status=:error,profile_helper_message=message,
+                    inference_status=Dict(key=>:error for key in keys(result.inference_status)),
+                    profile_message=Dict(key=>message for key in keys(result.inference_status)),
+                    inference_messages=Dict(key=>message for key in keys(result.inference_status)),
+                    profile_endpoint_distances=Dict(key=>missing for key in keys(result.inference_status))))
+            end
+            merge(profile,(interval_method=:profile,covariance=interval_result.covariance,
+                  interval_failures=interval_result.interval_failures))
+        end
+    final_diagnostics=merge(diagnostics,method_result,(;criterion,information_limit=info_limit,
+        interval_level=.95,interval_levels=INTERVAL_LEVELS,
+        coefficient_interval_method=interval_method==:normal ? :plugin_normal_wald : :native_ml_profile,
+        variance_interval_reason=:not_expected,interval_failure))
+    FitResult(base_snapshot;intervals=method_result.intervals_by_level[.95],diagnostics=final_diagnostics)
 end
 
 end # module GroundTruthLMM

@@ -1,7 +1,8 @@
 module GroundTruth
 using Random, SHA, Statistics, LinearAlgebra, Distributions
 export Scenario, ri_scenario, truth, generate, Adapter, FitResult, ols, logistic_mle, oracle_gls,
-       runstudy, summarize, seedfor, replay, export_data, write_results, reference_bundle
+       runstudy, summarize, seedfor, replay, export_data, write_results, reference_bundle,
+       compare_inference, inference_details
 
 const RI_GENERATOR_REVISION = "random-intercept-v2"
 
@@ -464,5 +465,7 @@ function reference_bundle(dir, d; engine=:stan)
     end
     destination
 end
+
+include("inference_comparison.jl")
 
 end

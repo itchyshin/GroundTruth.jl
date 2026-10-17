@@ -163,3 +163,8 @@ include("logistic_controls.jl")
 
 # Random-intercept predictor-level amendment and default-stream regression.
 include("ri_xlevel.jl")
+
+# Pure accounting contract for typed ML/REML interval comparisons.
+include("inference_comparison.jl")
+include("inference_profile_protocol.jl")
+include("inference_preflight.jl")

@@ -22,6 +22,7 @@ makedocs(
         "Home" => "index.md",
         "Quickstart" => "quickstart.md",
         "Gaussian random intercept" => "random-intercept.md",
+        "Random-intercept inference" => "random-intercept-inference.md",
         "Random-intercept reliability" => "random-intercept-reliability.md",
         "Capabilities" => "capabilities.md",
         "Validation" => "validation.md",

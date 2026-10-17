@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "construction": "deterministic arithmetic; no RNG; observed data only",
+  "fixtures": [
+    {
+      "file": "balanced_interior.csv",
+      "sha256": "b9177531711978f1e8bd11e9d35328c791a2e5c1ef21c28a1ef505ca075af019",
+      "n": 24,
+      "groups": 6,
+      "purpose": "Well-conditioned ML/REML GLS, covariance and independent profile roots",
+      "profile_validation": true
+    },
+    {
+      "file": "boundary_zero.csv",
+      "sha256": "81b69503ebfc3646e05efc656d7c2e7b6578a107bd8cad2ea5d88d458321eb13",
+      "n": 24,
+      "groups": 6,
+      "purpose": "Exact zero group variance and analytic OLS ML versus REML residual scale",
+      "profile_validation": true
+    },
+    {
+      "file": "unbalanced_singleton.csv",
+      "sha256": "4378e2efb0a58ddc7c6293604d088ff73a105f6ec250694bfa5d49b6bba6768a",
+      "n": 15,
+      "groups": 5,
+      "purpose": "Unequal group sizes including singleton; interior oracle",
+      "profile_validation": true
+    },
+    {
+      "file": "two_group_within_x.csv",
+      "sha256": "39e05146d2c7a5f6381d40a2ff79d6dc911de38db6bb679e8667369f449a8a2e",
+      "n": 8,
+      "groups": 2,
+      "purpose": "Two groups with within-group x variation; weak information distinct from identifiability",
+      "profile_validation": false
+    },
+    {
+      "file": "two_group_group_x.csv",
+      "sha256": "f4fc529fcd6f9fc438a3f09006b368e3bb40f3a1d284f91f755ed903ec3679a4",
+      "n": 8,
+      "groups": 2,
+      "purpose": "Group-constant x spans G=2 group means; REML tau2 unidentifiable",
+      "profile_validation": false
+    },
+    {
+      "file": "six_group_group_x.csv",
+      "sha256": "7e02ae7459f328a7678d9551b6a8179ea5a31936ba9814a290faea4e36729b9b",
+      "n": 24,
+      "groups": 6,
+      "purpose": "Group-level predictor with residual group degrees of freedom",
+      "profile_validation": true
+    },
+    {
+      "file": "near_residual_collapse.csv",
+      "sha256": "bfe26b09c97e1c4cf13ac43a74162f32683be30ade7a4efe8c4dd3a3b31fa7ee",
+      "n": 12,
+      "groups": 4,
+      "purpose": "Nonzero but tiny within-group residual; numerical stress, no normal tolerance gate",
+      "profile_validation": false
+    },
+    {
+      "file": "exact_residual_collapse.csv",
+      "sha256": "ef60bf09cfc910e4653515bd45b386ac640d7ef82e0ac0fc914eabeccfec09ff",
+      "n": 9,
+      "groups": 3,
+      "purpose": "Reject sigma2-collapse likelihood; full rank fixed design",
+      "profile_validation": false,
+      "invalid": "residual"
+    },
+    {
+      "file": "rank_deficient.csv",
+      "sha256": "6febb7a48c9f6a083e0b39022bd4b8c15477a33eef9891c3adc745aaa71df3ff",
+      "n": 6,
+      "groups": 3,
+      "purpose": "Reject fixed design rank deficiency",
+      "profile_validation": false,
+      "invalid": "rank"
+    },
+    {
+      "file": "predictor_shift_rescale.csv",
+      "sha256": "45d5579103195a5e4d254ad11e82247a72169f6f0e120a0b1f83725c92d07518",
+      "n": 24,
+      "groups": 6,
+      "purpose": "From balanced_interior x_new=3-100*x; covariance A C A' with A=[[1,.03],[0,-.01]]",
+      "profile_validation": false
+    },
+    {
+      "file": "response_shift_rescale.csv",
+      "sha256": "f6812bc3cb5adcd15baab42ce80026fa66af8b5bfb9c507f43163cfc83aad1e2",
+      "n": 24,
+      "groups": 6,
+      "purpose": "From balanced_interior y_new=2+.01*y; coefficient shift and .0001 covariance/variance scale",
+      "profile_validation": false
+    }
+  ]
+}
