@@ -71,7 +71,10 @@ jobs:
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
         with:
-          coverage: user
+          # Action contract is Bool true|false (default true). That is Pkg.test(;
+          # coverage=true) for the existing suite, not Julia's --code-coverage=user
+          # string. "user" is rejected as parse(Bool, "user") before tests run.
+          coverage: true
       - uses: julia-actions/julia-processcoverage@v1
       - name: Summarize generated lcov.info
         run: |
