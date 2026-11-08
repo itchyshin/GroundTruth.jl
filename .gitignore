@@ -10,3 +10,8 @@ results/**/tmb-build/
 # Local logistic-twins execution state
 .unlazy/
 LOOP/
+
+# Local Julia coverage artifacts (CI writes lcov.info ephemerally)
+*.jl.cov
+*.jl.*.cov
+lcov.info

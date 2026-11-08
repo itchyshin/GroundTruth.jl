@@ -1,0 +1,17 @@
+# Configuration only. Not evidence of upload reception, a processed Codecov
+# report, or a main baseline. GitHub project/patch statuses stay informational
+# until an owner-authorized merge to default plus a successful main workflow
+# upload creates that baseline.
+
+comment:
+  layout: "header, diff, files"
+  behavior: default
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
