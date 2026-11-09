@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Workflow default is contents:read. The coverage job additionally requests
+# id-token:write for Codecov OIDC. GITHUB_TOKEN is never passed to Codecov
+# and is not a Codecov upload token.
 permissions:
   contents: read
 
@@ -26,3 +29,93 @@ jobs:
       - uses: julia-actions/cache@v2
       - name: Run package tests
         run: julia --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
+
+  # Honest coverage of the existing Julia suite. This repo has no OS/version
+  # matrix today; the test job above is unchanged. One lcov.info is produced
+  # and uploaded once (no flags, no search, no second uploader).
+  coverage:
+    name: Coverage (lcov + Codecov OIDC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      JULIA_NUM_THREADS: 1
+      JULIA_NUM_PRECOMPILE_TASKS: 1
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@v7
+      - name: Record checkout identity
+        run: |
+          {
+            echo "### Checkout identity (not a Codecov processed report)"
+            echo
+            echo "- event: \`${{ github.event_name }}\`"
+            echo "- github.ref: \`${{ github.ref }}\`"
+            echo "- github.sha (Actions GITHUB_SHA): \`${{ github.sha }}\`"
+            echo "- git rev-parse HEAD: \`$(git rev-parse HEAD)\`"
+            echo "- pull_request.head.sha: \`${{ github.event.pull_request.head.sha || 'n/a' }}\`"
+            echo "- pull_request.base.sha: \`${{ github.event.pull_request.base.sha || 'n/a' }}\`"
+            echo
+            echo "On \`pull_request\`, \`github.sha\` / this checkout is the synthetic merge"
+            echo "commit (\`refs/pull/*/merge\`), not the branch head. On \`push\` to \`main\`,"
+            echo "they are the exact default-branch commit. Do not treat PR coverage as a"
+            echo "main baseline."
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1.12.6'
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
+        with:
+          # Action contract is Bool true|false (default true). That is Pkg.test(;
+          # coverage=true) for the existing suite, not Julia's --code-coverage=user
+          # string. "user" is rejected as parse(Bool, "user") before tests run.
+          coverage: true
+      - uses: julia-actions/julia-processcoverage@v1
+      - name: Summarize generated lcov.info
+        run: |
+          set -euo pipefail
+          if [ ! -s lcov.info ]; then
+            echo "lcov.info missing or empty after julia-processcoverage" >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lf = lh = files = 0
+          for line in Path("lcov.info").read_text().splitlines():
+              if line.startswith("SF:"):
+                  files += 1
+              elif line.startswith("LF:"):
+                  lf += int(line.split(":", 1)[1])
+              elif line.startswith("LH:"):
+                  lh += int(line.split(":", 1)[1])
+          pct = (100.0 * lh / lf) if lf else float("nan")
+          block = "\n".join([
+              "",
+              "### Coverage execution (local lcov, not Codecov processed %)",
+              "",
+              f"- lcov.info bytes: {Path('lcov.info').stat().st_size}",
+              f"- source files in lcov: {files}",
+              f"- lines hit / found: {lh} / {lf}",
+              f"- local line rate: {pct:.2f}%" if lf else "- local line rate: undefined (LF=0)",
+              "",
+              "This is stage 2 (execution). Upload reception, processed report, and",
+              "main baseline are later stages and must be evidenced separately.",
+              "",
+          ])
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a").write(block + "\n")
+          print(block)
+          PY
+      - name: Upload coverage to Codecov (OIDC, no token)
+        uses: codecov/codecov-action@v5
+        with:
+          files: lcov.info
+          disable_search: true
+          use_oidc: true
+          fail_ci_if_error: true
+          name: GroundTruth.jl existing suite
