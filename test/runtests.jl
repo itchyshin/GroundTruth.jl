@@ -165,6 +165,7 @@ include("logistic_controls.jl")
 include("ri_xlevel.jl")
 
 # Pure accounting contract for typed ML/REML interval comparisons.
+include("coverage_gaps.jl")
 include("inference_comparison.jl")
 include("inference_profile_protocol.jl")
 include("inference_preflight.jl")
